@@ -1,0 +1,2701 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <base target="_top">
+	
+	<!--
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Arial&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	-->
+
+	
+	<script src="./../libraries/chart.umd.js"></script>
+	<script src="./../libraries/papaparse.min.js"></script>
+    
+
+    <style>
+        /* IMPORT FONTS */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
+        
+        /* RESET */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html { width: 100%; height: 100%; font-family: 'Montserrat', sans-serif; background: #F8F9FA; }
+        
+        /* HEADER */
+        .header { background: linear-gradient(to right, #7B1F43, #D35400); padding: 15px 30px; display: flex; align-items: center; color: white; }
+        .logo-container { display: flex; align-items: center; }
+        .logo { height: 50px; margin-right: 15px; }
+        .title { font-size: 24px; font-weight: 600; }
+        .header-menu { margin-left: auto; display: flex; gap: 20px; }
+        .header-menu a { text-decoration: none; color: white; font-size: 16px; font-weight: 500; transition: color 0.3s ease; }
+        .header-menu a:hover { color: #FFD700; }
+        
+        /* MAIN CONTAINER */
+        .container { display: flex; height: calc(100vh - 80px); }
+        
+        /* HIDE SIDEBAR */
+        .sidebar { display: none; }
+        
+        /* CHART AREA */
+        .chartArea {
+            flex: 1;
+            padding: 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            grid-gap: 20px;
+            overflow-y: auto;
+            max-height: 85vh; /* Fixed height with scrolling */
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+        }
+        .chart-title { font-size: 18px; font-weight: bold; cursor: pointer; }
+        .chart-description { font-size: 14px; color: #666; margin-top: 5px; cursor: pointer; }
+        
+        /* EDIT HTML BUTTON */
+        .edit-html-container {
+            position: fixed;
+            bottom: 55px;
+            right: 40px;
+			z-index: 10;
+        }
+        .edit-html-btn { padding: 10px 15px; background: #7B1F43; color: white; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .edit-html-btn:hover { background: #D35400; }
+        
+        /* INLINE EDITING */
+        .editable { display: inline-block; border-bottom: 1px dashed #ccc; }
+        .editable:focus { outline: none; border-bottom: 1px solid #7B1F43; }
+        
+        /* HTML EDITOR */
+        .html-editor { display: none; position: fixed; top: 10%; left: 50%; transform: translateX(-50%); width: 80%; height: 70vh; background: white; padding: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); border-radius: 10px; }
+        .html-editor textarea { width: 100%; height: 85%; font-family: monospace; }
+
+		/* FOOTER */
+		.footer {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			text-align: center;
+			padding: 10px 0;
+			font-size: 14px;
+			background: white;
+			color: #7B1F43;
+			border-top: 1px solid rgba(0, 0, 0, 0.1);
+			box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+		}
+
+		/* Styling for the HTML Editor */
+		.html-editor {
+			display: none;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 80%;
+			height: 70vh;
+			background: #282c34;
+			color: #abb2bf;
+			padding: 15px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+			border-radius: 8px;
+			z-index: 1000;
+			display: flex;
+			flex-direction: column;
+		}
+
+		/* Header for the editor */
+		.editor-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 18px;
+			font-weight: bold;
+			padding: 10px;
+			background: #1f2229;
+			color: white;
+		}
+
+		/* Close button */
+		.editor-close-btn {
+			background: none;
+			border: none;
+			color: white;
+			font-size: 22px;
+			cursor: pointer;
+		}
+
+		/* Code-like text area */
+		#editorContent {
+			flex-grow: 1;
+			width: 100%;
+			height: 100%;
+			font-family: "Fira Code", "Courier New", monospace;
+			font-size: 14px;
+			background: #282c34;
+			color: #abb2bf;
+			border: none;
+			outline: none;
+			padding: 10px;
+			resize: none;
+			line-height: 1.4;
+			white-space: pre;
+			overflow: auto;
+		}
+
+		/* Buttons for the editor */
+		.editor-buttons {
+			display: flex;
+			justify-content: flex-end;
+			gap: 10px;
+			padding: 10px;
+			background: #1f2229;
+		}
+
+		/* Buttons */
+		.edit-html-btn {
+			padding: 8px 15px;
+			background: #7B1F43;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: 0.3s;
+		}
+
+		.edit-html-btn:hover {
+			background: #D35400;
+		}
+
+		/* Cancel button */
+		.cancel-btn {
+			background: #444;
+		}
+
+		.cancel-btn:hover {
+			background: #666;
+		}
+
+
+
+
+/* Modernized Select Styling */
+select {
+    font-family: 'Avenir', sans-serif;
+    font-size: 14px;
+    color: #666; /* Lighter gray text */
+    background-color: rgba(255, 255, 255, 0.1); /* Slight glass effect */
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 12px 15px;
+    border-radius: 8px; /* Softer, rounded corners */
+    appearance: none; /* Remove default browser styling */
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Enhance focus state */
+select:focus {
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Stronger focus effect */
+}
+
+/* Dropdown options with smooth style */
+select option {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #555 !important; /* Slightly darker text */
+    padding: 8px;
+    font-weight: 300;
+}
+
+/* Hover & Focus effects for options */
+select option:hover,
+select option:focus {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: #333 !important;
+}
+
+
+
+/* Make multi-select boxes look cleaner */
+select[multiple] {
+    height: auto;
+    min-height: 100px;
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 8px;
+}
+
+/* Remove default browser dropdown icon */
+select::-ms-expand {
+    display: none;
+}
+
+
+
+
+
+
+
+
+.edit-html-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align everything to the right */
+    gap: 5px;
+    width: 100%;
+}
+
+#editHtmlButton {
+    align-self: flex-end; /* Ensures only "Edit HTML" is right-aligned */
+}
+
+.preset-container {
+    display: flex;
+    gap: 5px; /* Space between the dropdown and button */
+    justify-content: flex-end; /* Aligns dropdown & button to the right */
+    width: 100%;
+}
+
+
+
+
+    </style>
+	
+  </head>
+  <body>
+
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="../assets/logo.svg" alt="RPPL Logo" class="logo">
+            <h1 class="title">Dashboard</h1>
+        </div>
+        <nav class="header-menu">
+            <a href="RPPL_LocalVisualizerCORS.html">Visualizer</a>
+            <a href="dashboardSample.html">Dashboard Sample</a>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <main class="chartArea">
+		<!--
+            <div class="chart-container">
+                <div class="chart-title editable" data-id="teacher_satisfaction">Teacher Satisfaction Per School</div>
+                <canvas id="chart1"></canvas>
+                <div class="chart-description editable" data-id="teacher_satisfaction_desc">Comparison of satisfaction levels across four schools.</div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title editable" data-id="final_exam_trends">Final Exam Score Trends</div>
+                <canvas id="chart2"></canvas>
+                <div class="chart-description editable" data-id="final_exam_trends_desc">Trends in final exam scores across five classes.</div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title editable" data-id="career_preparedness">Agreement with Career Preparedness Statement</div>
+                <canvas id="chart3"></canvas>
+                <div class="chart-description editable" data-id="career_preparedness_desc">Agreement levels across three schools.</div>
+            </div>
+			-->
+        </main>
+    </div>
+    
+	<!--
+	<div class="edit-html-container">
+		
+		<button id="editHtmlButton" class="edit-html-btn">Edit HTML</button>
+		<br>
+		<select id="presetDropdown" class="preset-dropdown">
+			<option value="" disabled selected>Select a Preset</option>
+		</select>
+		<button id="addGraphButton" class="edit-html-btn secondary-btn">Add Graph from Preset</button>
+	</div>
+	-->
+	
+	<div class="edit-html-container">
+		<button id="editHtmlButton" class="edit-html-btn">Edit HTML</button>
+		<div class="preset-container">
+			<select id="presetDropdown" class="preset-dropdown">
+				<option value="" disabled selected>Select a Preset</option>
+			</select>
+			<button id="addGraphButton" class="edit-html-btn secondary-btn">Add Graph from Preset</button>
+		</div>
+	</div>
+
+	
+	<!-- Message that disappears when the first graph is added -->
+	<!--
+	<div id="emptyDashboardMessage" class="empty-message">
+		Use the Add Graph from Preset button to load your first graph on the dashboard.
+	</div>
+	-->
+
+	<!--
+	<div class="html-editor" id="htmlEditor" style="display: none;">
+		<textarea id="editorContent"></textarea>
+		<button id="saveHtmlButton" class="edit-html-btn">Save & Refresh</button>
+	</div>
+	-->
+	
+	<div class="html-editor" id="htmlEditor" style="display: none;">
+		<div class="editor-header">
+			<span>Edit HTML</span>
+			<button id="closeEditorButton" class="editor-close-btn">&times;</button>
+		</div>
+		<textarea id="editorContent"></textarea>
+		<div class="editor-buttons">
+			<button id="saveHtmlButton" class="edit-html-btn">Save & Refresh</button>
+			<button id="cancelHtmlButton" class="edit-html-btn cancel-btn">Cancel</button>
+		</div>
+	</div>
+
+
+    <!-- MAIN CONTAINER -->
+    <div class="container" style="display: none;">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="filters">
+
+                <h2>Data Source</h2>
+                <select id="datasource1" onchange="fetchCSVData()"></select>     
+				
+				<h2>Primary Filter</h2>
+                <select id="primary1" onchange="updatePrimary2Options();"></select>
+                <select id="primary2" multiple onchange="updateChart()"></select>
+
+                <h2>Secondary Filters</h2>
+                <select id="secondary1" multiple onchange="updateChart();"></select>
+
+                <h2>Outcomes</h2>
+                <select id="outcomes1" multiple onchange="updateChart()"></select>
+
+                <h2>Aggregation Options</h2>
+                <div id="aggregationOptions" onchange="updateChart()">
+                    <label><input type="radio" name="stat" value="frequency" checked> Frequency</label><br>
+                    <label><input type="radio" name="stat" value="mean" > Mean</label><br>
+                    <label><input type="radio" name="stat" value="median"> Median</label><br>
+                    <label><input type="radio" name="stat" value="mode"> Mode</label><br>                   
+                </div>
+                        
+                <h2>Presets</h2>
+                <select id="presets1" onchange="updateChartUsingPreset()"></select>
+                <button id="addPresetButton" class="primary-btn">Add as Preset</button>
+                <button id="exportPresetsButton" class="primary-btn">Export Presets</button>
+                <!-- <input type="file" id="importPresetsInput" accept=".json"> -->
+				<!-- Hidden file input -->
+				<!-- Hidden file input -->
+				<input type="file" id="importPresetsInput" accept=".json">
+
+				<!-- Styled label as a button -->
+				<label for="importPresetsInput" class="file-upload-label primary-btn">
+					Upload Presets
+				</label>
+            </div>
+			<br><br><br>
+        </aside>
+
+        <!-- CHART AREA with Enlarged Glassmorphism -->
+        <main class="chartArea">
+            <div class="glass-container">
+                <div class="loading-spinner">Upload a CSV to start...</div>
+                <canvas id="myChart"></canvas>
+            </div>
+        </main>
+    </div>
+		
+    <script>
+	
+/*
+        function generateCharts() {
+            new Chart(document.getElementById('chart1'), {
+                type: 'bar',
+                data: {
+                    labels: ['School A', 'School B', 'School C', 'School D'],
+                    datasets: [
+                        { label: 'Satisfied', data: [80, 70, 85, 75], backgroundColor: '#7B1F43' },
+                        { label: 'Not Satisfied', data: [20, 30, 15, 25], backgroundColor: '#D35400' }
+                    ]
+                }
+            });
+            
+            new Chart(document.getElementById('chart2'), {
+                type: 'line',
+                data: {
+                    labels: ['Class A', 'Class B', 'Class C', 'Class D', 'Class E'],
+                    datasets: [{ label: 'Final Exam Score', data: [78, 82, 85, 79, 90], borderColor: '#7B1F43' }]
+                }
+            });
+            
+            new Chart(document.getElementById('chart3'), {
+                type: 'bar',
+                data: {
+                    labels: ['School X', 'School Y', 'School Z'],
+                    datasets: [{ label: 'Agreement Level', data: [30, 50, 70], backgroundColor: '#7B1F43' }]
+                }
+            });
+        }
+        document.addEventListener("DOMContentLoaded", generateCharts);
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".editable").forEach(el => {
+        let key = el.dataset.id;
+
+        el.setAttribute("contenteditable", "true");
+
+        if (key && localStorage.getItem(key)) {
+            el.innerText = localStorage.getItem(key);
+        }
+
+        el.addEventListener("blur", function () {
+            if (key) {
+                localStorage.setItem(key, el.innerText.trim());
+
+                let savedHTML = localStorage.getItem("savedHTML") || document.body.innerHTML;
+                let tempDiv = document.createElement("div");
+                tempDiv.innerHTML = savedHTML;
+
+                let targetEl = tempDiv.querySelector(`[data-id='${key}']`);
+                if (targetEl) {
+                    targetEl.innerText = el.innerText.trim();
+                    localStorage.setItem("savedHTML", tempDiv.innerHTML);
+                }
+            }
+        });
+
+        el.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                el.blur();
+            }
+        });
+    });
+
+    const editor = document.getElementById("htmlEditor");
+    const textarea = document.getElementById("editorContent");
+    const editButton = document.getElementById("editHtmlButton");
+    const saveButton = document.getElementById("saveHtmlButton");
+    const cancelButton = document.getElementById("cancelHtmlButton");
+    const closeButton = document.getElementById("closeEditorButton");
+
+    function openEditor() {
+        if (!editor || !textarea) {
+            console.error("Editor elements not found.");
+            return;
+        }
+
+        editor.style.display = "flex"; // Show the editor
+
+        // 🔥 FIX: Only load savedHTML if it exists, otherwise show a placeholder
+        textarea.value = localStorage.getItem("savedHTML") || "<!-- Start editing your HTML here -->";
+    }
+
+    function saveAndRefresh() {
+        if (!textarea) {
+            console.error("Editor content not found.");
+            return;
+        }
+
+        try {
+            const updatedHTML = textarea.value;
+            localStorage.setItem("savedHTML", updatedHTML);
+
+            let tempDiv = document.createElement("div");
+            tempDiv.innerHTML = updatedHTML;
+
+            document.querySelectorAll(".editable").forEach(el => {
+                let key = el.dataset.id;
+                if (key && tempDiv.querySelector(`[data-id='${key}']`)) {
+                    el.innerText = tempDiv.querySelector(`[data-id='${key}']`).innerText;
+                    localStorage.setItem(key, el.innerText.trim());
+                }
+            });
+
+            editor.style.display = "none";
+        } catch (error) {
+            console.error("Error updating HTML:", error);
+        }
+    }
+
+    function closeEditor() {
+        editor.style.display = "none"; // Hide editor without saving
+    }
+
+    if (editButton) editButton.addEventListener("click", openEditor);
+    if (saveButton) saveButton.addEventListener("click", saveAndRefresh);
+    if (cancelButton) cancelButton.addEventListener("click", closeEditor);
+    if (closeButton) closeButton.addEventListener("click", closeEditor);
+
+    // ✅ FINAL FIX: Do NOT load editor on page load, only update saved content
+    if (localStorage.getItem("savedHTML")) {
+        let tempDiv = document.createElement("div");
+        tempDiv.innerHTML = localStorage.getItem("savedHTML");
+
+        document.querySelectorAll(".editable").forEach(el => {
+            let key = el.dataset.id;
+            if (key && tempDiv.querySelector(`[data-id='${key}']`)) {
+                el.innerText = tempDiv.querySelector(`[data-id='${key}']`).innerText;
+            }
+        });
+    }
+});
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        /*
+		document.querySelectorAll(".editable").forEach(el => {
+            el.addEventListener("blur", () => localStorage.setItem(el.innerText, el.innerHTML));
+        });
+        
+        function openEditor() {
+            document.getElementById('htmlEditor').style.display = 'block';
+            document.getElementById('editorContent').value = document.documentElement.outerHTML;
+        }
+        
+        function saveAndRefresh() {
+            document.open();
+            document.write(document.getElementById('editorContent').value);
+            document.close();
+        }
+		*/
+
+// 🟢 MAKE INLINE EDITS PERSISTENT
+/*
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".editable").forEach(el => {
+        let key = el.dataset.id; // Use the pre-defined key
+
+        // Ensure the element is contenteditable
+        el.setAttribute("contenteditable", "true");
+
+        // Load saved text from localStorage if it exists
+        if (key && localStorage.getItem(key)) {
+            el.innerText = localStorage.getItem(key);
+        }
+
+        // Save changes on blur or Enter key
+        el.addEventListener("blur", function () {
+            if (key) {
+                localStorage.setItem(key, el.innerText.trim());
+            }
+        });
+
+        el.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent new lines
+                el.blur(); // Save changes
+            }
+        });
+    });
+});
+
+
+
+
+// 🟢 FIX "EDIT HTML" BUTTON FUNCTIONALITY
+function openEditor() {
+    const editor = document.getElementById('htmlEditor');
+    const textarea = document.getElementById('editorContent');
+
+    if (!editor || !textarea) {
+        console.error("Editor elements not found.");
+        return;
+    }
+
+    // Show the editor and load the current HTML into it
+    editor.style.display = 'block';
+    textarea.value = document.documentElement.outerHTML;
+}
+
+// 🟢 FIX "SAVE & REFRESH" FUNCTIONALITY
+function saveAndRefresh() {
+    const editorContent = document.getElementById('editorContent');
+
+    if (!editorContent) {
+        console.error("Editor content not found.");
+        return;
+    }
+
+    try {
+        const updatedHTML = editorContent.value;
+
+        // Replace document content
+        document.open();
+        document.write(updatedHTML);
+        document.close();
+    } catch (error) {
+        console.error("Error updating HTML:", error);
+    }
+}
+*/
+
+
+    </script>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        &copy; 2025 RPPL. All Rights Reserved.
+    </footer>
+
+      <script>
+        let myChart = document.getElementById("myChart").getContext('2d');
+        let localChart;
+
+        var JSLIST;
+        var JSLISTprime;
+
+        /*****************************
+         * FETCH DATA FROM SHEET
+        *****************************/
+
+
+		// const csvFiles = ['DS1-AaronAnthony-sampledata.csv', 'DS2-HeatherHill-sampledata.csv', 'DS3-ELASchusterman.csv', 'DS4-BMGFOverdeck.csv', 'DS5-BOYEOYStudentsurvey.csv', 'DS6-TeacherPulseAndSurvey.csv', 'DS7-GoogleForms.csv', 'DS8-Qualtrics.csv', 'DS9-TeacherDemographicsAndDispositions.csv']; 
+		const csvFiles = ['SchoolLeaderSurvey.csv', 'TeacherSurvey.csv', 'TeacherPulseCheck.csv', 'PLObservation.csv', 'ClassroomObservation.csv', 'StudentSurvey.csv']
+		// @Brendon: Add more CSV files here. ^Current limitation. Since we cannot install a REST-based server in Stronghold, and since directly accessing files from a .html file is prohibited by CORS (Cross-Origin Resource Sharing) standard, we are manually listing all new DS files here. CORS restrictions are true for all browsers.
+
+		function populateDataSourceDropdown() {
+			const datasourceDropdown = document.getElementById('datasource1');
+
+			// Clear existing options
+			datasourceDropdown.innerHTML = '';
+
+			// Populate dropdown with options
+			csvFiles.forEach(file => {
+				const option = document.createElement('option');
+				option.textContent = file; // Display file name
+				option.value = file; // Use file name as value
+				datasourceDropdown.appendChild(option);
+			});
+
+			// Set a default value
+			datasourceDropdown.value = csvFiles[0];
+		}
+
+		// Call the function to populate the dropdown on page load
+		populateDataSourceDropdown();
+
+		function fetchCSVData() {
+			const selectedDataSource = `../data/${document.getElementById('datasource1').value}`;
+			fetch(selectedDataSource)
+				.then(response => response.text())
+				.then(csvData => {
+					// Reset filters
+					resetFilters();
+					// Parse new CSV data
+					parseCSVData(csvData);
+				})
+				.catch(error => handleError(error));
+		}
+
+		function resetFilters() {
+			const primary1 = document.getElementById('primary1');
+			const primary2 = document.getElementById('primary2');
+			const secondary1 = document.getElementById('secondary1');
+			const outcomes1 = document.getElementById('outcomes1');
+
+			primary1.innerHTML = '<option value="">Select...</option>';
+			primary2.innerHTML = '<option value="">Select...</option>';
+			secondary1.innerHTML = '<option value="">Select...</option>';
+			outcomes1.innerHTML = '<option value="">Select...</option>';
+		}
+
+
+		
+		
+		document.getElementById('datasource1').addEventListener('change', function() {
+			// alert("this fired");
+			fetchCSVData();
+		});
+
+
+
+		function handleFiles(files) {
+			const fileToRead = files[0];
+			const reader = new FileReader();
+			reader.readAsText(fileToRead);
+			reader.onload = function(event) {
+				const csvData = event.target.result;
+				parseCSVData(csvData);
+			};
+		}
+		
+		
+		function parseCSVData(csvData) {
+			Papa.parse(csvData, {
+				header: true, // Parse the CSV data as an array of objects
+				complete: function(results) {
+					console.log("Parsed Results:", results.data);
+					const convertedData = convertToArrayOfArrays(results.data);
+					console.log("New CSV Headers:", convertedData[0]); // Log the headers
+					displayData(convertedData);
+				}
+			});
+		}
+
+		
+		function convertToArrayOfArrays(data) {
+		  if (data.length === 0) return [];
+
+		  // Extract the headers
+		  const headers = Object.keys(data[0]);
+
+		  // Extract the rows and perform necessary conversions
+		  const rows = data.map(row => {
+			return headers.map(header => {
+			  let value = row[header];
+
+			  // Convert dates to ISO format
+			  if (header.includes('Timestamp') && value) {
+				const dateParts = value.split('/');
+				if (dateParts.length === 3) {
+				  const day = dateParts[0].padStart(2, '0');
+				  const month = dateParts[1].padStart(2, '0');
+				  const year = dateParts[2];
+				  value = `${year}-${month}-${day}T00:00:00.000Z`;
+				}
+			  }
+
+			  // Convert numeric strings to numbers
+			  if (!isNaN(value) && value.trim() !== '') {
+				value = Number(value);
+			  }
+
+			  return value;
+			});
+		  });
+
+		  // Combine headers and rows
+		  return [headers, ...rows];
+		}
+
+
+
+        /***************************
+        * DisplayData function is the first function called after fetching data from spreadsheet
+        ***************************/
+
+		
+		function displayData(data) {
+		  window.JSLIST = data;
+		  console.log("JSLIST:", JSLIST);
+
+		  window.JSLISTprime = transposeArray(JSLIST);
+		  console.log("JSLISTprime:", JSLISTprime);
+
+		  let primary1 = document.getElementById("primary1");
+		  let primary2 = document.getElementById("primary2");
+		  let secondary1 = document.getElementById("secondary1");
+		  let outcomes1 = document.getElementById("outcomes1");
+
+		  // Add "ALL" options
+		  ["ALL"].forEach(item => {
+			[primary2, secondary1].forEach(select => {
+			  let option = document.createElement("option");
+			  option.text = item;
+			  option.value = item;
+			  select.add(option);
+			});
+		  });
+
+		  // Populate primary1 and outcomes1 dropdowns
+		  JSLIST[0].forEach((item, index) => {
+			let option1 = document.createElement("option");
+			option1.text = item;
+			option1.value = item;
+			primary1.add(option1);
+
+			let option2 = document.createElement("option");
+			option2.text = item;
+			option2.value = item;
+			outcomes1.add(option2);
+		  });
+
+		  // Default selections
+		  primary1.selectedIndex = 1;  // Example: third index for primary
+		  outcomes1.selectedIndex = 5;  // Example: eighth index for outcomes
+		  document.querySelector('input[name="stat"][value="frequency"]').checked = true; // Default to 'frequency'
+
+		  // Populate primary2 and secondary1 with default or specific values
+		  updateSelections(primary1.value);
+
+		  primary2.selectedIndex = 0;
+		  secondary1.selectedIndex = 0;
+
+		  // Create an initial chart first
+		  updateChart();
+		}
+
+
+		function updateSelections(selectedColumn) {
+			let primary2 = document.getElementById("primary2");
+			let secondary1 = document.getElementById("secondary1");
+			let columnIndex = JSLIST[0].indexOf(selectedColumn); // Find the index of the selected column
+			let columnValues = new Set(JSLIST.slice(1).map(row => row[columnIndex]));  // Get unique values from the selected column
+
+			[primary2, secondary1].forEach(select => {
+				// Clear existing options except "ALL"
+				Array.from(select.options).forEach(option => {
+					if (option.value !== "ALL") select.remove(option);
+				});
+				// Add new options
+				columnValues.forEach(value => {
+					let option = document.createElement("option");
+					option.text = value;
+					option.value = value;
+					select.add(option);
+				});
+			});
+		}
+
+        function handleError(error) {
+          console.error(error);
+          alert("There was an error fetching data: " + error);
+        }
+
+        // fetchDataFromSheet();
+		// window.handleFiles = handleFiles;
+		fetchCSVData();
+
+        /****************************
+        * ALL HELPER FUNCTIONS HERE INCLUDING MAIN UPDATE CHART FUNCTION
+        ****************************/
+
+        // this transposes JSLIST so that each array in the arraylist has the structure [header, value1, value2, value3]
+        function transposeArray(array) {
+         
+          const numRows = array.length;
+          const numCols = array[0].length;
+
+        
+          const transposedArray = [];
+
+         
+          for (let i = 0; i < numCols; i++) {
+            const newRow = [];
+            for (let j = 0; j < numRows; j++) {
+              newRow.push(array[j][i]);
+            }
+            transposedArray.push(newRow);
+          }
+
+          return transposedArray;
+        }
+
+        // universal number randomizer
+        function getRandomInteger(min, max) {
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+
+		
+// Update Primary2 function
+function updatePrimary2Options() {
+    console.log('FIRE UPDATEPRIMARY2');
+    
+    const selectedPreset = document.getElementById('presets1').value;
+    const selectedDataSource = document.getElementById('datasource1').value;
+    const preset = window.customPresets[selectedPreset];
+    console.log("Preset Details inside Primary2: ", preset);  // Log the preset details
+
+    const primary1 = document.getElementById("primary1");
+    const primary2 = document.getElementById("primary2");
+    primary2.innerHTML = ''; // Clear existing options
+
+    // Add the 'ALL' option by default
+    const allOption = document.createElement("option");
+    allOption.text = "ALL";
+    allOption.value = "ALL";
+    primary2.add(allOption);
+
+    // Get the selected column name from primary1
+    const selectedColumn = primary1.value;
+
+    // Find the index of the selected column in JSLIST's first row (column headers)
+    const columnIndex = JSLIST[0].indexOf(selectedColumn);
+    if (columnIndex === -1) {
+        console.error('Selected column not found in JSLIST');
+        return;
+    }
+
+    // Extract unique values from the selected column across all rows
+    const uniqueValues = Array.from(new Set(JSLIST.slice(1).map(row => row[columnIndex]))); // Skip the header row
+
+    // Populate primary2 with options based on unique values
+    uniqueValues.forEach(value => {
+        let option = document.createElement("option");
+        option.text = value;
+        option.value = value;
+        primary2.add(option);
+    });
+
+    // Handle preset data for primary2
+    if (preset && preset.primary2 && Array.isArray(preset.primary2)) {
+        // Deselect all options first
+        Array.from(primary2.options).forEach(option => option.selected = false);
+
+        // Use preset.primary2 as indices to select the appropriate options
+        preset.primary2.forEach(index => {
+            if (primary2.options[index]) {
+                primary2.options[index].selected = true; // Select by index
+            } else {
+                console.warn(`Index ${index} is out of bounds for primary2 dropdown`);
+            }
+        });
+    } else {
+        // If no preset or primary2 data, default to selecting "ALL"
+        primary2.value = "ALL";
+    }
+
+    updateChart();
+}
+
+
+
+        // UPDATE CHART HELPER FUNCTIONS
+        function filterData(primary1Value, primary2Values, secondary1Values, outcomes1Values) {
+            // Placeholder: Filter JSLIST based on selections
+            // Return filtered data
+            return JSLIST; // Temporarily return the full dataset
+        }
+
+        function processData(filteredData, outcomes1Values) {
+            // Placeholder: Process filtered data to create datasets for Chart.js
+            // Return datasets
+            return []; // Temporarily return an empty array
+        }
+
+
+function renderChart(chartData) {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    
+    // Retrieve selections
+    const primary1Value = document.getElementById('primary1').value; // Bold and all caps
+    const primary2Values = Array.from(document.getElementById('primary2').selectedOptions)
+                        .map(option => option.value)
+                        .join(', ');
+    const secondary1Values = Array.from(document.getElementById('secondary1').selectedOptions)
+                        .map(option => option.value)
+                        .join(', ');
+    const outcomes1Value = document.getElementById('outcomes1').value; // Bold and all caps
+
+    // Format title
+    const titleText = `${primary1Value} (${primary2Values ? `${primary2Values}` : 'All'} - ${secondary1Values ? `${secondary1Values}` : 'All'}) x ${outcomes1Value}`;
+
+    if (localChart) {
+        localChart.destroy(); // Destroy the old chart instance if it exists
+    }
+
+    // Background color plugin
+    const backgroundColorPlugin = {
+        id: 'customCanvasBackgroundColor',
+        beforeDraw: (chart) => {
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 1)'; // Set to any color you want
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
+
+    localChart = new Chart(ctx, {
+        type: 'bar', // You may dynamically change this based on data type
+        data: {
+            labels: chartData.labels, // Use labels from processed data
+            datasets: chartData.datasets // Use datasets from processed data
+        },
+        plugins: [backgroundColorPlugin],
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: titleText,
+                    font: {
+                        size: 18
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.dataset.label + ': ' + tooltipItem.parsed.y;
+                        }
+                    }
+                }                
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // localChart.style.backgroundColor = 'rgba(255,0,0,255)';
+}
+ 
+        
+        function updateChart() {
+			console.log('FIRE UPDATECHART');
+            const primary1Selection = document.getElementById('primary1').value;
+            const primary2Selections = getSelectedValues(document.getElementById('primary2'));
+			console.log("PRIMARY2SELECTIONS", primary2Selections);
+            const outcomes1Selection = getSelectedValues(document.getElementById('outcomes1'));
+
+            // Filter data based on primary2 selection
+            let filteredData = filterDataBasedOnSelections(primary1Selection, primary2Selections);
+
+            const secondary1Selections = getSelectedValues(document.getElementById('secondary1'));
+            filteredData = filterDataBasedOnAllSelections(filteredData, secondary1Selections);
+
+            // Check if all selected outcomes are numerical
+            const allNumerical = outcomes1Selection.every(selection => selection.startsWith('n'));
+
+            let chartData;
+
+            if (allNumerical) {
+                // If all outcomes are numerical, calculate averages over time slices
+                chartData = calculateAveragesOverTimeSlices(filteredData, outcomes1Selection);
+            } else {
+                // For mixed or purely categorical outcomes, process data as before
+                chartData = processDataForChart(filteredData, outcomes1Selection, JSLIST);
+            }
+
+            // Render chart with the processed data
+            renderChart(chartData);
+            document.querySelector('.loading-spinner').style.display = 'none';
+        }
+
+        
+        function getSelectedValues(selectElement) {
+            return Array.from(selectElement.selectedOptions).map(option => option.value);
+        }
+        
+        function filterDataBasedOnSelections(primary1Selection, primary2Selections) {
+            // Find the index of the column selected in primary1 from the JSLIST headers
+            const columnIndex = JSLIST[0].indexOf(primary1Selection);
+
+            // If the column index is not found, log an error and return the full dataset
+            if (columnIndex === -1) {
+                console.error('Selected column not found in JSLIST headers:', primary1Selection);
+                return JSLIST.slice(1); // or return []; for an empty dataset
+            }
+
+            // Filter JSLIST based on primary2 selections.
+            // If "ALL" is selected in primary2, skip filtering by this column
+            let filteredData = JSLIST.slice(1);
+            if (!primary2Selections.includes("ALL")) {
+                filteredData = filteredData.filter(row => primary2Selections.includes(row[columnIndex]));
+            }
+
+            console.log("1: FILTERED DATA")
+            console.log(filteredData);
+            
+            return filteredData;
+        }
+        
+
+
+        /*************************
+         * PROCESS DATA FOR CHART - controls the graphs that appear
+         * **********************/
+
+
+        function processDataForChart(filteredData, outcomesSelection) {
+            let datasets = [];
+            const primary1Selection = document.getElementById('primary1').value; // Retrieve the primary1 selection
+            const primary1Index = JSLIST[0].indexOf(primary1Selection); // Use primary1 to find the column index
+
+            // Handle "ALL" selection uniformly
+            const primary2Element = document.getElementById('primary2');
+            let primary2Selections;
+            if (primary2Element.querySelector('option:checked').text === "ALL") {
+                // Consider all possible values as selected
+                primary2Selections = [...new Set(filteredData.map(row => row[primary1Index]))];
+            } else {
+                primary2Selections = Array.from(primary2Element.selectedOptions).map(option => option.value);
+            }
+
+            const selectedStat = document.querySelector('input[name="stat"]:checked').value;
+            let labels = determineLabelsBasedOnOutcome(filteredData, outcomesSelection, JSLIST);
+
+            outcomesSelection.forEach(outcome => {
+                const isCategorical = outcome.startsWith('c');
+                const outcomeIndex = JSLIST[0].indexOf(outcome);
+
+                if (isCategorical) {
+                    let dataPerPrimary2Selection = {};
+
+                    primary2Selections.forEach(selection => {
+                        dataPerPrimary2Selection[selection] = {};
+                        labels.forEach(label => {
+                            dataPerPrimary2Selection[selection][label] = [];
+                        });
+                    });
+
+                    filteredData.forEach(row => {
+                        const category = row[outcomeIndex];
+                        const primary2Value = row[primary1Index];
+
+                        if (primary2Selections.includes(primary2Value) && labels.includes(category)) {
+                            dataPerPrimary2Selection[primary2Value][category].push(parseFloat(row[outcomeIndex]) || 0);
+                        }
+                    });
+
+                    primary2Selections.forEach(selection => {
+                        let data = labels.map(label => {
+                            let values = dataPerPrimary2Selection[selection][label];
+                            switch (selectedStat) {
+                                case "frequency":
+                                    return values.length;
+                                case "mean":
+                                    return values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+                                case "median":
+                                    return medianc(values);
+                                case "mode":
+                                    return modec(values);
+                                default:
+                                    return 0;  // Default to zero if no data or invalid stat
+                            }
+                        });
+
+                        datasets.push({
+                            label: `${outcome} - ${selection}`,
+                            data: data,
+                            backgroundColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`,
+                        });
+                    });
+                } else {
+                    // Handle numerical data (if necessary, adjust as needed)
+                }
+            });
+
+            return { labels, datasets };
+        }
+
+        function medianc(values) {
+            if (!values.length) return 0;
+            values.sort((a, b) => a - b);
+            const mid = Math.floor(values.length / 2);
+            return values.length % 2 === 0 ? (values[mid - 1] + values[mid]) / 2 : values[mid];
+        }
+
+        function modec(values) {
+            if (!values.length) return 0;
+            const frequency = {};
+            let maxFreq = 0;
+            let modes = [];
+            values.forEach(val => {
+                frequency[val] = (frequency[val] || 0) + 1;
+                if (frequency[val] > maxFreq) {
+                    maxFreq = frequency[val];
+                    modes = [val];
+                } else if (frequency[val] === maxFreq) {
+                    modes.push(val);
+                }
+            });
+            return modes.length === 1 ? modes[0] : modes;
+        }
+
+
+        function determineLabelsBasedOnOutcome(filteredData, outcomesSelection, JSLIST) {
+            // Default to using timestamps if specific logic for outcomes isn't defined
+            let defaultLabelIndex = JSLIST[0].indexOf('c Timestamp'); // Adjust as needed
+
+            // If the first selected outcome is categorical, use its categories as labels
+            if (outcomesSelection.length > 0 && outcomesSelection[0].startsWith('c')) {
+                const firstOutcomeIndex = JSLIST[0].indexOf(outcomesSelection[0]);
+                // Use unique values from this category as labels
+                const uniqueValues = [...new Set(filteredData.map(row => row[firstOutcomeIndex]))];
+                return uniqueValues.length > 0 ? uniqueValues : ['No Data']; // Fallback to 'No Data' if empty
+            }
+
+            // If the first selection is numerical or no specific logic is defined, default to timestamps or another generic approach
+            return filteredData.map(row => row[defaultLabelIndex] || 'No Label'); // Fallback to 'No Label' if undefined
+        }
+
+
+
+        function calculateAveragesOverTimeSlices(filteredData, numericalOutcomes) {
+            const timestampIndex = JSLIST[0].indexOf('c Timestamp');
+            const primary1Element = document.getElementById('primary1');
+            const groupByColumn = primary1Element.options[primary1Element.selectedIndex].value;
+            const groupByIndex = JSLIST[0].indexOf(groupByColumn);
+
+            const primary2Element = document.getElementById('primary2');
+            let selectedGroups;
+            if (primary2Element.querySelector('option:checked').text === "ALL") {
+                // If "ALL" is selected, use the text of all options except "ALL"
+                selectedGroups = Array.from(primary2Element.options).map(option => option.text).filter(text => text !== "ALL");
+            } else {
+                selectedGroups = Array.from(primary2Element.selectedOptions).map(option => option.text);
+            }
+
+            const timestamps = filteredData.map(row => new Date(row[timestampIndex]).getTime()).sort((a, b) => a - b);
+            const boundaries = [
+                timestamps[0],
+                timestamps[Math.floor(timestamps.length / 3)],
+                timestamps[Math.floor(2 * timestamps.length / 3)],
+                timestamps[timestamps.length - 1]
+            ];
+
+            function getBucketIndex(timestamp) {
+                const ts = new Date(timestamp).getTime();
+                return ts <= boundaries[1] ? 0 : ts <= boundaries[2] ? 1 : 2;
+            }
+
+            let groupedData = {};
+
+            filteredData.forEach(row => {
+                const groupValue = row[groupByIndex];
+                if (selectedGroups.includes(groupValue)) {
+                    if (!groupedData[groupValue]) {
+                        groupedData[groupValue] = [[], [], []];
+                    }
+                    const bucketIndex = getBucketIndex(row[timestampIndex]);
+                    numericalOutcomes.forEach(outcome => {
+                        const outcomeIndex = JSLIST[0].indexOf(outcome);
+                        const value = parseFloat(row[outcomeIndex]);
+                        if (!isNaN(value)) {
+                            groupedData[groupValue][bucketIndex].push(value);
+                        }
+                    });
+                }
+            });
+
+            let datasets = [];
+            Object.entries(groupedData).forEach(([groupValue, buckets]) => {
+                let data = buckets.map(bucket => {
+                    switch (document.querySelector('input[name="stat"]:checked').value) {
+                        case 'mean':
+                            return bucket.reduce((sum, curr) => sum + curr, 0) / bucket.length;
+                        case 'median':
+                            return median(bucket);
+                        case 'mode':
+                            return mode(bucket);
+                        case 'frequency':
+                            return bucket.length;
+                        default:
+                            return bucket.reduce((sum, curr) => sum + curr, 0) / bucket.length;  // default to mean
+                    }
+                });
+
+                datasets.push({
+                    label: groupValue,
+                    data: data,
+                    borderColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`,
+                    type: 'line',
+                    fill: false
+                });
+            });
+
+            return {
+                labels: ['Start', 'Middle', 'End'],
+                datasets: datasets
+            };
+        }
+
+        function median(values) {
+            if (values.length === 0) return 0;
+            values.sort((a, b) => a - b);
+            let mid = Math.floor(values.length / 2);
+            return values.length % 2 === 0 ? (values[mid - 1] + values[mid]) / 2 : values[mid];
+        }
+
+        function mode(values) {
+            let frequency = {}, max = 0, result = [];
+            for (let v of values) {
+                if (frequency[v]) frequency[v]++;
+                else frequency[v] = 1;
+                if (frequency[v] > max) {
+                    max = frequency[v];
+                    result = [v];
+                } else if (frequency[v] === max) {
+                    result.push(v);
+                }
+            }
+            return result;
+        }
+
+
+        document.getElementById('primary2').addEventListener('change', function() {
+            updateSecondary1Options();
+        });
+
+        function updateSecondary1Options() {
+            const primary1Dropdown = document.getElementById('primary1');
+            const primary1SelectedIndex = primary1Dropdown.selectedIndex; // Index in dropdown
+            const primary1SelectedValue = primary1Dropdown.value; // Selected value, e.g., "District"
+            const secondary1Options = [];
+
+            // Assuming JSLIST[0] contains column headers and the rest are data rows
+            JSLIST[0].forEach((column, columnIndex) => {
+                // Skip the column that matches the primary1 selection
+                if (column !== primary1SelectedValue) {
+                    const uniqueValues = getUniqueValuesForColumn(columnIndex);
+                    uniqueValues.forEach(value => {
+                        // Format as "column name: value"
+                        secondary1Options.push(`${column}: ${value}`);
+                    });
+                }
+            });
+
+            populateDropdown('secondary1', secondary1Options);
+        }
+
+        function getUniqueValuesForColumn(columnIndex) {
+            const values = new Set(); // Use a Set to ensure uniqueness
+            JSLIST.slice(1).forEach(row => {
+                values.add(row[columnIndex]);
+            });
+            return [...values]; // Convert Set back to an array
+        }
+
+        function populateDropdown(dropdownId, options) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.innerHTML = ''; // Clear existing options
+
+            // Optionally add a default "Select" or "All" option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = 'ALL';
+            defaultOption.textContent = 'All';
+            dropdown.appendChild(defaultOption);
+
+            options.forEach(optionValue => {
+                const option = document.createElement('option');
+                option.value = optionValue; // Here, optionValue is already formatted
+                option.textContent = optionValue; // Use the formatted string directly
+                dropdown.appendChild(option);
+            });
+
+            dropdown.value = 'ALL';
+        }
+
+        document.getElementById('primary1').addEventListener('change', updateSecondary1Options);
+
+        function filterDataBasedOnAllSelections(filteredData, secondary1Selections) {
+            if (!secondary1Selections.includes("ALL")) {
+                // Filter only if specific selections are made in secondary1
+                return filteredData.filter(row => {
+                    return secondary1Selections.some(selection => {
+                        // Parse the selection into column name and value
+                        const [columnName, value] = selection.split(': ').map(s => s.trim());
+                        const columnIndex = JSLIST[0].indexOf(columnName);
+                        return row[columnIndex] === value;
+                    });
+                });
+            }
+            // Return the data as-is if "ALL" is selected or no secondary1 selections are made
+            return filteredData;
+        }
+		
+
+        /***************************
+         * Populate Presets
+         * ************************/
+
+		
+		const presetOptions = [
+			'Scores over time of all Schools',
+			'Race Distribution within a District',
+			'Scores of Students from Economically Disadvantaged Backgrounds'
+		];
+
+		
+		function populatePresetsDropdown() {
+			const presetsSelect = document.getElementById('presets1');
+			presetsSelect.innerHTML = ''; // Clear existing options
+
+			presetOptions.forEach(optionText => {
+				const option = new Option(optionText, optionText);
+				presetsSelect.add(option);
+			});
+		}
+
+		// Call this function to populate the dropdown on page load
+		populatePresetsDropdown();
+
+        /***************************
+         * Update Chart using presets
+         * ************************/
+
+        function getSelectedValues(selectElement) { // get selected values; Helper function for when preset is getting multiple values
+            var values = [];
+            for (var i = 0; i < selectElement.options.length; i++) {
+                if (selectElement.options[i].selected) {
+                    values.push(selectElement.options[i].value);
+                }
+            }
+            return values;
+        }
+
+
+function forceSelectOptions(selectId, indices) {
+    var select = document.getElementById(selectId);
+    Array.from(select.options).forEach(option => option.selected = indices.includes(option.index));
+}
+
+function selectFirstOptionOnly(selectId) {
+    var select = document.getElementById(selectId);
+    Array.from(select.options).forEach((option, index) => {
+        option.selected = index === 0; // Only the first option is selected
+    });
+}
+
+/*
+function updateChartUsingPreset() {
+	console.log('FIRE UPDATECHARTUSINGPRESET');
+    const selectedPreset = document.getElementById('presets1').value;
+    const selectedDataSource = document.getElementById('datasource1').value;
+
+    document.querySelector('input[name="stat"][value="frequency"]').checked = true;
+
+    // Log the selected preset details
+    console.log("Selected Preset: ", selectedPreset);
+    
+    if (window.customPresets && window.customPresets[selectedPreset]) {
+        const preset = window.customPresets[selectedPreset];
+        console.log("Preset Details: ", preset);  // Log the preset details
+
+        // Set primary1, primary2, secondary1, outcomes1 dropdowns based on preset values
+        setupDropdown('primary1', preset.primary1, false);  // Primary1 dropdown
+        setupDropdown('primary2', preset.primary2, false);   // Primary2 dropdown (multiple selection)
+        setupDropdown('secondary1', preset.secondary1, true); // Secondary1 dropdown (multiple selection)
+        setupDropdown('outcomes1', preset.outcomes1, false);  // Outcomes1 dropdown
+
+        // Set the stat radio button based on the preset
+        document.querySelector(`input[name="stat"][value="${preset.stat}"]`).checked = true;
+
+        // Select the items in the primary2 dropdown based on the preset's primary2 values
+        const primary2 = document.getElementById('primary2');
+        // Deselect all options first (if any are pre-selected)
+        Array.from(primary2.options).forEach(option => option.selected = false);
+
+        // Select the options corresponding to the preset's primary2 values
+        if (preset.primary2 && preset.primary2.length > 0) {
+            preset.primary2.forEach(value => {
+                const option = Array.from(primary2.options).find(opt => opt.value === value);
+                if (option) {
+                    option.selected = true; // Select the option corresponding to the preset data
+                }
+            });
+        }
+    } else {
+        // Default behavior when no preset is found
+        switch (selectedPreset) {
+            case "Scores over time of all Schools":
+                setupDropdown('primary1', 4);
+                setupDropdown('primary2', 0, true);
+                setupDropdown('secondary1', 0, true);
+                setupDropdown('outcomes1', 8);
+                break;
+            case "Race Distribution within a District":
+                setupDropdown('primary1', 3);
+                setupDropdown('primary2', 0, true);
+                setupDropdown('secondary1', 0, true);
+                setupDropdown('outcomes1', 5);
+                break;
+            case "Scores of Students from Economically Disadvantaged Backgrounds":
+                setupDropdown('primary1', 6);
+                setupDropdown('primary2', 0, true);
+                setupDropdown('secondary1', 0, true);
+                setupDropdown('outcomes1', 8);
+                break;
+            // Add more cases as needed
+        }
+    }
+
+    // Manually trigger change events after setup
+    ['primary1'].forEach(id => {
+        const event = new Event('change');
+        document.getElementById(id).dispatchEvent(event);
+    });
+
+    // updateChart();
+}
+*/
+
+function updateChartUsingPreset() {
+    console.log('FIRE UPDATECHARTUSINGPRESET');
+    const selectedPreset = document.getElementById('presets1').value;
+    const selectedDataSource = document.getElementById('datasource1').value;
+
+    document.querySelector('input[name="stat"][value="frequency"]').checked = true;
+
+    console.log("Selected Preset: ", selectedPreset);
+
+    if (window.customPresets && window.customPresets[selectedPreset]) {
+        const preset = window.customPresets[selectedPreset];
+        console.log("Preset Details: ", preset);
+
+        // Check if the preset's dataset matches the currently selected one
+        if (preset.dataSource && preset.dataSource !== selectedDataSource) {
+            console.log(`Switching data source from ${selectedDataSource} to ${preset.dataSource}`);
+
+            // Set the data source dropdown to the preset's dataset
+            document.getElementById('datasource1').value = preset.dataSource;
+
+            // Trigger the dataset change event to load the new dataset
+            fetchCSVData(() => {
+                console.log(`Dataset ${preset.dataSource} loaded. Now applying preset.`);
+                applyPresetSettings(preset); // Apply the preset after dataset loads
+            });
+
+            return; // Stop further execution, preset will be applied after dataset loads
+        }
+
+        // If the dataset is the same, apply preset immediately
+        applyPresetSettings(preset);
+    } else {
+        console.warn("Preset not found or no preset selected.");
+    }
+}
+
+
+function applyPresetSettings(preset) {
+    console.log("Applying preset settings...");
+
+    // Set primary1, primary2, secondary1, outcomes1 dropdowns based on preset values
+    setupDropdown('primary1', preset.primary1, false);
+    setupDropdown('primary2', preset.primary2, false);
+    setupDropdown('secondary1', preset.secondary1, true);
+    setupDropdown('outcomes1', preset.outcomes1, false);
+
+    // Set the stat radio button based on the preset
+    document.querySelector(`input[name="stat"][value="${preset.stat}"]`).checked = true;
+
+    // Select the options in primary2 dropdown
+    const primary2 = document.getElementById('primary2');
+    Array.from(primary2.options).forEach(option => option.selected = false);
+
+    if (preset.primary2 && preset.primary2.length > 0) {
+        preset.primary2.forEach(value => {
+            const option = Array.from(primary2.options).find(opt => opt.value === value);
+            if (option) {
+                option.selected = true;
+            }
+        });
+    }
+
+    // Manually trigger change events after setup
+    ['primary1'].forEach(id => {
+        const event = new Event('change');
+        document.getElementById(id).dispatchEvent(event);
+    });
+
+    console.log("Preset applied successfully.");
+}
+
+
+
+document.getElementById('presets1').addEventListener('change', updateChartUsingPreset);
+
+/*
+function addPreset() {
+    const presetName = prompt("Enter a name for your new preset:");
+    if (!presetName) {
+        alert("Preset name cannot be empty!");
+        return;
+    }
+
+    const primary1Index = document.getElementById('primary1').selectedIndex;
+    const primary2Indices = Array.from(document.getElementById('primary2').selectedOptions).map(opt => opt.index);
+    const secondary1Indices = Array.from(document.getElementById('secondary1').selectedOptions).map(opt => opt.index);
+    const outcomes1Indices = Array.from(document.getElementById('outcomes1').selectedOptions).map(opt => opt.index);
+    const stat = document.querySelector('input[name="stat"]:checked').value;
+
+    const newPreset = {
+        primary1: primary1Index,
+        primary2: primary2Indices,
+        secondary1: secondary1Indices,
+        outcomes1: outcomes1Indices,
+        stat
+    };
+
+    // Store the new preset in window.customPresets
+    window.customPresets[presetName] = newPreset;
+
+    // Save the updated presets to localStorage
+    savePresetsToStorage();
+
+    // Add the new preset to the dropdown
+    const presetSelect = document.getElementById('presets1');
+    const option = new Option(presetName, presetName);
+    presetSelect.add(option);
+    presetSelect.value = presetName; // Select the new preset immediately
+
+    updateChartUsingPreset(); // Apply the new preset immediately
+}
+*/
+
+function addPreset() {
+    const presetName = prompt("Enter a name for your new preset:");
+    if (!presetName) {
+        alert("Preset name cannot be empty!");
+        return;
+    }
+
+    const primary1Index = document.getElementById('primary1').selectedIndex;
+    const primary2Indices = Array.from(document.getElementById('primary2').selectedOptions).map(opt => opt.index);
+    const secondary1Indices = Array.from(document.getElementById('secondary1').selectedOptions).map(opt => opt.index);
+    const outcomes1Indices = Array.from(document.getElementById('outcomes1').selectedOptions).map(opt => opt.index);
+    const stat = document.querySelector('input[name="stat"]:checked').value;
+    const dataSource = document.getElementById('datasource1').value; // Get selected data source
+
+    const newPreset = {
+        primary1: primary1Index,
+        primary2: primary2Indices,
+        secondary1: secondary1Indices,
+        outcomes1: outcomes1Indices,
+        stat,
+        dataSource // Store the data source in the preset
+    };
+
+    // Store the new preset in window.customPresets
+    window.customPresets[presetName] = newPreset;
+
+    // Save the updated presets to localStorage
+    savePresetsToStorage();
+
+    // Add the new preset to the dropdown
+    const presetSelect = document.getElementById('presets1');
+    const option = new Option(presetName, presetName);
+    presetSelect.add(option);
+    presetSelect.value = presetName; // Select the new preset immediately
+
+    updateChartUsingPreset(); // Apply the new preset immediately
+}
+
+
+
+function setupDropdown(selectId, indices, isAll = false) {
+	console.log('FIRE SETUPDROPDOWN');
+    const select = document.getElementById(selectId);
+    
+    // Clear all selections first
+    Array.from(select.options).forEach(option => {
+        option.selected = false;
+    });
+
+    if (isAll) {
+        // If 'ALL' is intended, select the first option or all options based on specific use-case
+        select.options[0].selected = true;
+    } else {
+        // Convert indices to array if not already, to handle both single and multiple selections
+        indices = Array.isArray(indices) ? indices : [indices];
+
+        // Set selected based on indices
+        indices.forEach(index => {
+            if (select.options[index]) {
+                select.options[index].selected = true;
+            }
+        });
+    }
+}
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadPresetsFromStorage();
+    document.getElementById('presets1').addEventListener('change', updateChartUsingPreset);
+    document.getElementById('addPresetButton').addEventListener('click', addPreset);
+});
+
+// Hardcoded default presets
+const defaultPresets = {
+    "Sample Preset 1": { primary1: 1, primary2: 0, secondary1: 0, outcomes1: 3, stat: "frequency" },
+    "Sample Preset 2": { primary1: 1, primary2: 0, secondary1: 0, outcomes1: 4, stat: "frequency" },
+    "Sample Preset 3": { primary1: 1, primary2: 0, secondary1: 0, outcomes1: 5, stat: "frequency" }
+};
+
+// Function to load presets from localStorage
+function loadPresetsFromStorage() {
+    const storedPresets = JSON.parse(localStorage.getItem('customPresets')) || {};
+
+    // Combine default presets with stored presets
+    window.customPresets = { ...defaultPresets, ...storedPresets };
+
+    // Populate the presets dropdown
+    const presetSelect = document.getElementById('presets1');
+    presetSelect.innerHTML = ''; // Clear existing options
+
+    Object.keys(window.customPresets).forEach(presetName => {
+        const option = new Option(presetName, presetName);
+        presetSelect.add(option);
+    });
+}
+
+// Function to save presets to localStorage
+/*
+function savePresetsToStorage() {
+    localStorage.setItem('customPresets', JSON.stringify(window.customPresets));
+}
+*/
+
+function savePresetsToStorage() {
+    localStorage.setItem("customPresets", JSON.stringify(window.customPresets));
+}
+
+document.getElementById('exportPresetsButton').addEventListener('click', function() {
+	const customPresets = localStorage.getItem('customPresets');
+	const blob = new Blob([customPresets], { type: 'application/json' });
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = 'presets.json';
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
+});
+
+document.getElementById('importPresetsInput').addEventListener('change', function(event) {
+	const file = event.target.files[0];
+	if (file) {
+		const reader = new FileReader();
+		reader.onload = function(e) {
+			const importedPresets = e.target.result;
+			localStorage.setItem('customPresets', importedPresets);
+			// Optionally, refresh the page or update the presets dropdown
+			location.reload();
+		};
+		reader.readAsText(file);
+	}
+});
+
+
+
+
+
+
+
+function populatePresetDropdown() {
+    const presetDropdown = document.getElementById("presetDropdown");
+    const presets1Dropdown = document.getElementById("presets1");
+
+    if (!presetDropdown || !presets1Dropdown) {
+        console.error("❌ Preset dropdowns not found.");
+        return;
+    }
+
+    // Clear previous options
+    presetDropdown.innerHTML = '<option value="" disabled selected>Select a Preset</option>';
+
+    // Copy options from `presets1` to `presetDropdown`
+    Array.from(presets1Dropdown.options).forEach(option => {
+        if (option.value) {  // Skip empty options
+            const newOption = document.createElement("option");
+            newOption.value = option.value;
+            newOption.textContent = option.textContent;
+            presetDropdown.appendChild(newOption);
+        }
+    });
+
+    console.log("✅ Preset Dropdown Populated.");
+}
+
+// Run this when the page loads
+document.addEventListener("DOMContentLoaded", populatePresetDropdown);
+
+
+document.getElementById("presetDropdown").addEventListener("change", function () {
+    const selectedPreset = this.value;
+
+    if (!selectedPreset) {
+        alert("Please select a valid preset.");
+        return;
+    }
+
+    console.log("📌 Syncing preset selection: ", selectedPreset);
+
+    // Set the same selection in presets1 and trigger its change event
+    const presets1Dropdown = document.getElementById("presets1");
+    presets1Dropdown.value = selectedPreset;
+    presets1Dropdown.dispatchEvent(new Event("change")); // Trigger chart update
+
+	/*
+    // Wait a short time to ensure the chart has been generated
+    setTimeout(() => {
+        cloneChart(selectedPreset);
+    }, 500); // Adjust delay if necessary
+	*/
+});
+
+function cloneChart(presetName) {
+    // Step 3: Find the last chart generated by `presets1`
+    const originalChartContainer = document.querySelector(".chart-container:last-child");
+
+    if (!originalChartContainer) {
+        console.error("❌ No chart found for preset:", presetName);
+        alert("Chart not found. Try generating it first.");
+        return;
+    }
+
+    console.log("✅ Found original chart. Cloning...");
+
+    // Step 4: Clone the chart container
+    const clonedChartContainer = originalChartContainer.cloneNode(true);
+    
+    // Step 5: Generate unique IDs for cloned elements
+    const newChartId = `cloned-chart-${Date.now()}`;
+    clonedChartContainer.id = newChartId;
+
+    const clonedCanvas = clonedChartContainer.querySelector("canvas");
+    if (clonedCanvas) {
+        const newCanvasId = `chart-${Date.now()}`;
+        clonedCanvas.id = newCanvasId;
+    }
+
+    // Step 6: Append the cloned chart inside the correct `.chartArea`
+    document.querySelector(".container .chartArea").appendChild(clonedChartContainer);
+
+    console.log("🎉 Chart cloned successfully!");
+}
+
+/*
+document.getElementById("addGraphButton").addEventListener("click", function () {
+    const presetDropdown = document.getElementById("presetDropdown");
+    const selectedPreset = presetDropdown.value;
+
+    if (!selectedPreset || !window.customPresets[selectedPreset]) {
+        alert("Please select a valid preset.");
+        return;
+    }
+
+    const originalChartCanvas = document.getElementById("myChart");
+
+    if (!originalChartCanvas) {
+        alert("No chart found to copy! Ensure you've selected a preset first.");
+        return;
+    }
+
+    // 🟢 Create a new chart container in the dashboard
+    let graphCounter = document.querySelectorAll(".chart-container").length;
+    const chartContainer = document.createElement("div");
+    chartContainer.classList.add("chart-container");
+
+    // 🟢 Add a title for the chart
+    const chartTitle = document.createElement("div");
+    chartTitle.classList.add("chart-title", "editable");
+    chartTitle.textContent = selectedPreset;
+
+    // 🟢 Clone the original canvas (deep copy to keep styles)
+    const clonedCanvas = document.createElement("canvas");
+    clonedCanvas.id = `clonedChart-${graphCounter}`;
+
+    // 🟢 Copy the chart description
+    const chartDescription = document.createElement("div");
+    chartDescription.classList.add("chart-description", "editable");
+    chartDescription.textContent = "Visualization based on preset: " + selectedPreset;
+
+    // 🟢 Append elements to the chart container
+    chartContainer.appendChild(chartTitle);
+    chartContainer.appendChild(clonedCanvas);
+    chartContainer.appendChild(chartDescription);
+
+    // 🟢 Append the chart container to the dashboard interface
+    document.querySelector(".chartArea").appendChild(chartContainer);
+
+    // 🟢 Copy the existing chart data and recreate the chart in the cloned canvas
+    const originalChart = Chart.getChart("myChart"); // Get the original Chart.js instance
+
+    if (!originalChart) {
+        alert("Could not find the original chart to copy.");
+        return;
+    }
+
+    // 🟢 Duplicate the dataset & config
+    const chartConfig = {
+        type: originalChart.config.type,
+        data: JSON.parse(JSON.stringify(originalChart.config.data)), // Deep copy data
+        options: JSON.parse(JSON.stringify(originalChart.config.options)), // Deep copy options
+    };
+
+    // 🛑 **Remove the title from the cloned chart**
+    if (chartConfig.options.plugins && chartConfig.options.plugins.title) {
+        chartConfig.options.plugins.title.display = false;
+    }
+
+    // 🟢 Create the new chart
+    new Chart(clonedCanvas.getContext("2d"), chartConfig);
+
+    console.log(`✅ Cloned chart added to dashboard: ${clonedCanvas.id}`);
+});
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+document.getElementById("addGraphButton").addEventListener("click", function () {
+    const presetDropdown = document.getElementById("presetDropdown");
+    const selectedPreset = presetDropdown.value;
+
+    if (!selectedPreset || !window.customPresets[selectedPreset]) {
+        alert("Please select a valid preset.");
+        return;
+    }
+
+    const originalChartCanvas = document.getElementById("myChart");
+
+    if (!originalChartCanvas) {
+        alert("No chart found to copy! Ensure you've selected a preset first.");
+        return;
+    }
+
+    // 🟢 Create a new chart container in the dashboard
+    let graphCounter = document.querySelectorAll(".chart-container").length;
+    const chartContainer = document.createElement("div");
+    chartContainer.classList.add("chart-container");
+
+    // 🟢 Add an editable title for the chart
+    const chartTitle = document.createElement("div");
+    chartTitle.classList.add("chart-title", "editable");
+    chartTitle.dataset.id = `chart-title-${graphCounter}`;
+    chartTitle.textContent = selectedPreset;
+
+    // 🟢 Clone the original canvas
+    const clonedCanvas = document.createElement("canvas");
+    clonedCanvas.id = `clonedChart-${graphCounter}`;
+
+    // 🟢 Add an editable description
+    const chartDescription = document.createElement("div");
+    chartDescription.classList.add("chart-description", "editable");
+    chartDescription.dataset.id = `chart-description-${graphCounter}`;
+    chartDescription.textContent = "Visualization based on preset: " + selectedPreset;
+
+    // 🟢 Append elements to the chart container
+    chartContainer.appendChild(chartTitle);
+    chartContainer.appendChild(clonedCanvas);
+    chartContainer.appendChild(chartDescription);
+
+    // 🟢 Append the chart container to the dashboard interface
+    document.querySelector(".chartArea").appendChild(chartContainer);
+
+    // 🟢 Copy the existing chart data and recreate the chart in the cloned canvas
+    const originalChart = Chart.getChart("myChart");
+
+    if (!originalChart) {
+        alert("Could not find the original chart to copy.");
+        return;
+    }
+
+    // 🟢 Duplicate the dataset & config
+    const chartConfig = {
+        type: originalChart.config.type,
+        data: JSON.parse(JSON.stringify(originalChart.config.data)), // Deep copy data
+        options: JSON.parse(JSON.stringify(originalChart.config.options)), // Deep copy options
+    };
+
+    // 🛑 Remove the title in cloned charts
+    if (chartConfig.options.plugins && chartConfig.options.plugins.title) {
+        chartConfig.options.plugins.title.display = false;
+    }
+
+    // 🟢 Create the new chart
+    new Chart(clonedCanvas.getContext("2d"), chartConfig);
+
+    console.log(`✅ Cloned chart added to dashboard: ${clonedCanvas.id}`);
+
+    // 🟢 Apply inline editing & local storage for title and description
+    applyInlineEditing(chartTitle);
+    applyInlineEditing(chartDescription);
+
+    // 🟢 Save chart to local storage
+    saveChartsToLocalStorage();
+});
+*/
+
+document.getElementById("addGraphButton").addEventListener("click", function () {
+    const presetDropdown = document.getElementById("presetDropdown");
+    const selectedPreset = presetDropdown.value;
+
+    if (!selectedPreset || !window.customPresets[selectedPreset]) {
+        alert("Please select a valid preset.");
+        return;
+    }
+
+    const originalChartCanvas = document.getElementById("myChart");
+
+    if (!originalChartCanvas) {
+        alert("No chart found to copy! Ensure you've selected a preset first.");
+        return;
+    }
+
+    // 🟢 Create a new chart container in the dashboard
+    let graphCounter = document.querySelectorAll(".chart-container").length;
+    const chartContainer = document.createElement("div");
+    chartContainer.classList.add("chart-container");
+    chartContainer.id = `chartContainer-${graphCounter}`;
+
+    // 🟢 Add an editable title for the chart
+    const chartTitle = document.createElement("div");
+    chartTitle.classList.add("chart-title", "editable");
+    chartTitle.dataset.id = `chart-title-${graphCounter}`;
+    chartTitle.textContent = selectedPreset;
+
+    // 🟢 Clone the original canvas
+    const clonedCanvas = document.createElement("canvas");
+    clonedCanvas.id = `clonedChart-${graphCounter}`;
+
+    // 🟢 Add an editable description
+    const chartDescription = document.createElement("div");
+    chartDescription.classList.add("chart-description", "editable");
+    chartDescription.dataset.id = `chart-description-${graphCounter}`;
+    chartDescription.textContent = "Visualization based on preset: " + selectedPreset;
+
+    // 🟢 Append elements to the chart container
+    chartContainer.appendChild(chartTitle);
+    chartContainer.appendChild(clonedCanvas);
+    chartContainer.appendChild(chartDescription);
+
+    // 🟢 Append the chart container to the dashboard interface
+    document.querySelector(".chartArea").appendChild(chartContainer);
+
+    // 🟢 Copy the existing chart data and recreate the chart in the cloned canvas
+    const originalChart = Chart.getChart("myChart");
+
+    if (!originalChart) {
+        alert("Could not find the original chart to copy.");
+        return;
+    }
+
+    // 🟢 Duplicate the dataset & config
+    const chartConfig = {
+        type: originalChart.config.type,
+        data: JSON.parse(JSON.stringify(originalChart.config.data)), // Deep copy data
+        options: JSON.parse(JSON.stringify(originalChart.config.options)), // Deep copy options
+    };
+
+    // 🛑 Remove the title in cloned charts
+    if (chartConfig.options.plugins && chartConfig.options.plugins.title) {
+        chartConfig.options.plugins.title.display = false;
+    }
+
+    // 🟢 Create the new chart
+    new Chart(clonedCanvas.getContext("2d"), chartConfig);
+
+    console.log(`✅ Cloned chart added to dashboard: ${clonedCanvas.id}`);
+
+    // 🟢 Save the chart as an image to LocalStorage
+    saveChartToLocalStorage(originalChartCanvas, `chart_${graphCounter}`);
+
+    // 🟢 Apply inline editing & local storage for title and description
+    applyInlineEditing(chartTitle);
+    applyInlineEditing(chartDescription);
+
+    // 🟢 Save chart metadata to LocalStorage
+    saveChartsToLocalStorage();
+});
+
+function saveChartToLocalStorage(canvas, storageKey) {
+    const imageData = canvas.toDataURL("image/png"); // Convert to Base64 PNG
+    localStorage.setItem(storageKey, imageData); // Save in LocalStorage
+    console.log(`✅ Chart image saved to LocalStorage: ${storageKey}`);
+}
+
+
+
+
+
+
+/**
+ * ✅ Function to Enable Inline Editing & Local Storage
+ */
+function applyInlineEditing(element) {
+    let key = element.dataset.id;
+
+    if (!key) return;
+
+    element.setAttribute("contenteditable", "true");
+
+    // Load saved text from localStorage
+    if (localStorage.getItem(key)) {
+        element.innerText = localStorage.getItem(key);
+    }
+
+    // Save changes on blur
+    element.addEventListener("blur", function () {
+        localStorage.setItem(key, element.innerText.trim());
+    });
+
+    // Prevent Enter from adding a new line (forces blur instead)
+    element.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            element.blur();
+        }
+    });
+}
+
+/**
+ * ✅ Save All Charts to Local Storage
+ */
+ /*
+function saveChartsToLocalStorage() {
+    let savedCharts = [];
+
+    document.querySelectorAll(".chart-container").forEach((container, index) => {
+        let chartTitle = container.querySelector(".chart-title").innerText.trim();
+        let chartDescription = container.querySelector(".chart-description").innerText.trim();
+        let canvasId = `clonedChart-${index}`;
+
+        const chartInstance = Chart.getChart(canvasId);
+
+        if (chartInstance) {
+            savedCharts.push({
+                title: chartTitle,
+                description: chartDescription,
+                canvasId: canvasId,
+                chartConfig: JSON.stringify(chartInstance.config),
+            });
+        }
+    });
+
+    localStorage.setItem("savedCharts", JSON.stringify(savedCharts));
+}
+*/
+/*
+function saveChartsToLocalStorage() {
+    let savedCharts = JSON.parse(localStorage.getItem("savedCharts") || "[]");
+
+    // Find the number of existing charts in storage
+    let graphCounter = savedCharts.length;
+
+    // Get the latest chart container
+    let chartContainers = document.querySelectorAll(".chart-container");
+    let lastChartContainer = chartContainers[chartContainers.length - 1];
+
+    if (!lastChartContainer) return;
+
+    // Get chart elements
+    let chartTitle = lastChartContainer.querySelector(".chart-title").textContent;
+    let chartDescription = lastChartContainer.querySelector(".chart-description").textContent;
+    let clonedCanvas = lastChartContainer.querySelector("canvas");
+
+    // Convert the chart into an image and save it
+    if (clonedCanvas) {
+        let chartImage = clonedCanvas.toDataURL("image/png");
+        localStorage.setItem(`chart_${graphCounter}`, chartImage); // Store with unique key
+    }
+
+    // Get chart config
+    const originalChart = Chart.getChart(clonedCanvas);
+    if (!originalChart) {
+        alert("❌ Could not find the original chart to save.");
+        return;
+    }
+
+    let chartConfig = JSON.stringify(originalChart.config);
+
+    // Save chart metadata
+    let chartData = {
+        title: chartTitle,
+        description: chartDescription,
+        canvasId: `clonedChart-${graphCounter}`,
+        chartConfig: chartConfig
+    };
+
+    savedCharts.push(chartData);
+    localStorage.setItem("savedCharts", JSON.stringify(savedCharts));
+
+    console.log(`✅ Saved chart_${graphCounter} to LocalStorage.`);
+}
+*/
+/*
+function saveChartsToLocalStorage() {
+    let savedCharts = JSON.parse(localStorage.getItem("savedCharts") || "[]");
+
+    document.querySelectorAll(".chart-container").forEach((chartContainer, index) => {
+        const canvas = chartContainer.querySelector("canvas");
+        if (!canvas) return;
+
+        const titleElement = chartContainer.querySelector(".chart-title");
+        const descElement = chartContainer.querySelector(".chart-description");
+
+        // 🛑 Avoid overwriting existing charts
+        let existingChart = savedCharts.find(c => c.canvasId === canvas.id);
+        if (existingChart) {
+            existingChart.title = titleElement.textContent;
+            existingChart.description = descElement.textContent;
+        } else {
+            // 🆕 Store new chart data
+            savedCharts.push({
+                title: titleElement.textContent,
+                description: descElement.textContent,
+                canvasId: canvas.id,
+                chartConfig: JSON.stringify(Chart.getChart(canvas.id).config)
+            });
+        }
+
+        // ✅ Store the chart image in LocalStorage
+        try {
+            let imageData = canvas.toDataURL("image/png");
+            localStorage.setItem(`chart_${canvas.id}`, imageData);
+        } catch (error) {
+            console.error(`❌ Error saving chart image for ${canvas.id}:`, error);
+        }
+    });
+
+    localStorage.setItem("savedCharts", JSON.stringify(savedCharts));
+}
+*/
+
+function saveChartsToLocalStorage() {
+    let savedCharts = JSON.parse(localStorage.getItem("savedCharts") || "[]");
+
+    document.querySelectorAll(".chart-container").forEach((chartContainer, index) => {
+        const canvas = chartContainer.querySelector("canvas");
+        if (!canvas) return;
+
+        const titleElement = chartContainer.querySelector(".chart-title");
+        const descElement = chartContainer.querySelector(".chart-description");
+
+        let chartData = Chart.getChart(canvas.id);
+        if (!chartData) return;
+
+        let chartId = `clonedChart-${index}`;
+
+        let newChart = {
+            title: titleElement.textContent,
+            description: descElement.textContent,
+            canvasId: chartId,
+            chartConfig: JSON.stringify(chartData.config),
+        };
+
+        let existingIndex = savedCharts.findIndex(c => c.canvasId === chartId);
+        if (existingIndex !== -1) {
+            savedCharts[existingIndex] = newChart;
+        } else {
+            savedCharts.push(newChart);
+        }
+
+        // 🛑 FIX: Delay capturing the image until the next frame to ensure the chart is drawn
+        setTimeout(() => {
+            try {
+                let imageData = canvas.toDataURL("image/png");
+                localStorage.setItem(`chartImage_${chartId}`, imageData);
+                console.log(`✅ Image saved for ${chartId}`);
+            } catch (error) {
+                console.error(`❌ Error saving chart image for ${chartId}:`, error);
+            }
+        }, 500); // Delay to ensure chart renders
+    });
+
+    localStorage.setItem("savedCharts", JSON.stringify(savedCharts));
+    console.log(`✅ Successfully saved ${savedCharts.length} charts.`);
+}
+
+
+
+/**
+ * ✅ Restore Saved Charts on Page Load
+ */
+ 
+/*
+function restoreChartsFromLocalStorage() {
+    const savedCharts = JSON.parse(localStorage.getItem("savedCharts") || "[]");
+
+    savedCharts.forEach((savedChart, index) => {
+        // 🟢 Create a new chart container in the dashboard
+        const chartContainer = document.createElement("div");
+        chartContainer.classList.add("chart-container");
+
+        // 🟢 Restore the chart title
+        const chartTitle = document.createElement("div");
+        chartTitle.classList.add("chart-title", "editable");
+        chartTitle.dataset.id = `chart-title-${index}`;
+        chartTitle.textContent = savedChart.title;
+
+        // 🟢 Restore the canvas
+        const clonedCanvas = document.createElement("canvas");
+        clonedCanvas.id = savedChart.canvasId;
+
+        // 🟢 Restore the chart description
+        const chartDescription = document.createElement("div");
+        chartDescription.classList.add("chart-description", "editable");
+        chartDescription.dataset.id = `chart-description-${index}`;
+        chartDescription.textContent = savedChart.description;
+
+        // 🟢 Append elements to the chart container
+        chartContainer.appendChild(chartTitle);
+        chartContainer.appendChild(clonedCanvas);
+        chartContainer.appendChild(chartDescription);
+
+        // 🟢 Append to the dashboard
+        document.querySelector(".chartArea").appendChild(chartContainer);
+
+        // 🟢 Restore the chart from saved config
+        let restoredConfig = JSON.parse(savedChart.chartConfig);
+
+        // ✅ SAFEGUARD: Ensure plugins and title exist before modifying them
+        if (restoredConfig.options && restoredConfig.options.plugins) {
+            if (restoredConfig.options.plugins.title) {
+                restoredConfig.options.plugins.title.display = false;
+            }
+        } else {
+            restoredConfig.options = restoredConfig.options || {}; // Ensure options exist
+            restoredConfig.options.plugins = restoredConfig.options.plugins || {}; // Ensure plugins exist
+        }
+
+        new Chart(clonedCanvas.getContext("2d"), restoredConfig);
+
+        // 🟢 Re-apply inline editing & storage for restored charts
+        applyInlineEditing(chartTitle);
+        applyInlineEditing(chartDescription);
+    });
+}
+*/
+/*
+function restoreChartsFromLocalStorage() {
+    const savedCharts = JSON.parse(localStorage.getItem("savedCharts") || "[]");
+
+    savedCharts.forEach((savedChart, index) => {
+        // 🟢 Create a new chart container in the dashboard
+        const chartContainer = document.createElement("div");
+        chartContainer.classList.add("chart-container");
+        chartContainer.id = `chartContainer-${index}`;
+
+        // 🟢 Restore the chart title
+        const chartTitle = document.createElement("div");
+        chartTitle.classList.add("chart-title", "editable");
+        chartTitle.dataset.id = `chart-title-${index}`;
+        chartTitle.textContent = savedChart.title;
+
+        // 🟢 Restore the chart description
+        const chartDescription = document.createElement("div");
+        chartDescription.classList.add("chart-description", "editable");
+        chartDescription.dataset.id = `chart-description-${index}`;
+        chartDescription.textContent = savedChart.description;
+
+        // 🟢 Restore the chart image
+        const savedImage = localStorage.getItem(`chart_${index}`);
+        if (savedImage) {
+            const imgElement = document.createElement("img");
+            imgElement.src = savedImage;
+            imgElement.alt = "Saved Chart";
+            chartContainer.appendChild(imgElement);
+			
+			imgElement.style.maxWidth = "100%";
+        } else {
+            console.log(`❌ No saved chart found in LocalStorage for key: chart_${index}`);
+        }
+
+        // 🟢 Append elements to the chart container
+        chartContainer.appendChild(chartTitle);
+        chartContainer.appendChild(chartDescription);
+
+        // 🟢 Append to the dashboard
+        document.querySelector(".chartArea").appendChild(chartContainer);
+
+        // 🟢 Re-apply inline editing & storage for restored charts
+        applyInlineEditing(chartTitle);
+        applyInlineEditing(chartDescription);
+    });
+}
+*/
+/*
+function restoreChartsFromLocalStorage() {
+    let savedCharts = JSON.parse(localStorage.getItem("savedCharts") || "[]");
+
+    savedCharts.forEach((savedChart, index) => {
+        // 🟢 Create a new chart container in the dashboard
+        const chartContainer = document.createElement("div");
+        chartContainer.classList.add("chart-container");
+        chartContainer.id = `chartContainer-${index}`;
+
+        // 🟢 Restore the chart title
+        const chartTitle = document.createElement("div");
+        chartTitle.classList.add("chart-title", "editable");
+        chartTitle.dataset.id = `chart-title-${index}`;
+        chartTitle.textContent = savedChart.title;
+
+        // 🟢 Restore the chart description
+        const chartDescription = document.createElement("div");
+        chartDescription.classList.add("chart-description", "editable");
+        chartDescription.dataset.id = `chart-description-${index}`;
+        chartDescription.textContent = savedChart.description;
+
+        // 🟢 Restore the chart image
+        let savedImage = localStorage.getItem(`chart_${index}`);
+        if (savedImage) {
+            let imgElement = document.createElement("img");
+            imgElement.src = savedImage;
+            imgElement.alt = "Saved Chart";
+            
+            // ✅ Ensure image scales properly within container
+            imgElement.style.width = "100%";
+            imgElement.style.height = "auto";
+            imgElement.style.display = "block";
+            imgElement.style.maxWidth = "100%";
+			// imgElement.style.z-index = "9999";
+
+            chartContainer.appendChild(imgElement);
+        } else {
+            console.log(`❌ No saved chart found in LocalStorage for key: chart_${index}`);
+        }
+
+        // 🟢 Append elements to the chart container
+        chartContainer.appendChild(chartTitle);
+        chartContainer.appendChild(chartDescription);
+
+        // 🟢 Append to the dashboard
+        document.querySelector(".chartArea").appendChild(chartContainer);
+
+        // 🟢 Re-apply inline editing for restored charts
+        applyInlineEditing(chartTitle);
+        applyInlineEditing(chartDescription);
+    });
+}
+*/
+
+function restoreChartsFromLocalStorage() {
+    let savedCharts = JSON.parse(localStorage.getItem("savedCharts") || "[]");
+
+    if (!savedCharts.length) {
+        console.log("❌ No saved charts found.");
+        return;
+    }
+
+    savedCharts.forEach((savedChart, index) => {
+        console.log(`🔄 Restoring ${savedChart.canvasId}...`);
+
+        const chartContainer = document.createElement("div");
+        chartContainer.classList.add("chart-container");
+        chartContainer.id = `chartContainer-${index}`;
+
+        // Restore title
+        const chartTitle = document.createElement("div");
+        chartTitle.classList.add("chart-title", "editable");
+        chartTitle.dataset.id = `chart-title-${index}`;
+        chartTitle.textContent = savedChart.title;
+
+        // Restore description
+        const chartDescription = document.createElement("div");
+        chartDescription.classList.add("chart-description", "editable");
+        chartDescription.dataset.id = `chart-description-${index}`;
+        chartDescription.textContent = savedChart.description;
+
+        // ✅ Create a placeholder for the image
+        let imgElement = new Image();
+        imgElement.alt = "Saved Chart";
+        imgElement.style.width = "100%";
+        imgElement.style.height = "auto";
+        imgElement.style.display = "block";
+        imgElement.style.maxWidth = "100%";
+
+        // Append elements before setting the image
+        chartContainer.appendChild(chartTitle);
+        chartContainer.appendChild(imgElement);
+        chartContainer.appendChild(chartDescription);
+        document.querySelector(".chartArea").appendChild(chartContainer);
+
+        // ✅ Fetch and apply the correct image
+        setTimeout(() => {
+            let savedImage = localStorage.getItem(`chartImage_${savedChart.canvasId}`);
+            if (savedImage) {
+                imgElement.src = savedImage;
+                console.log(`✅ Image restored for ${savedChart.canvasId}`);
+            } else {
+                console.log(`❌ No saved image found for ${savedChart.canvasId}.`);
+            }
+        }, 500); // Small delay to ensure elements are in place
+
+        // 🛠 **Fix: Reapply inline editing so titles/descriptions are editable again**
+        applyInlineEditing(chartTitle);
+        applyInlineEditing(chartDescription);
+    });
+}
+
+
+
+
+
+
+
+
+
+/*
+function restoreChartsFromLocalStorage() {
+    const savedCharts = JSON.parse(localStorage.getItem("savedCharts") || "[]");
+
+    savedCharts.forEach((savedChart, index) => {
+        // 🟢 Create a new chart container in the dashboard
+        const chartContainer = document.createElement("div");
+        chartContainer.classList.add("chart-container");
+
+        // 🟢 Restore the chart title
+        const chartTitle = document.createElement("div");
+        chartTitle.classList.add("chart-title", "editable");
+        chartTitle.dataset.id = `chart-title-${index}`;
+        chartTitle.textContent = savedChart.title;
+
+        // 🟢 Restore the canvas
+        const clonedCanvas = document.createElement("canvas");
+        clonedCanvas.id = savedChart.canvasId;
+
+        // 🟢 Restore the chart description
+        const chartDescription = document.createElement("div");
+        chartDescription.classList.add("chart-description", "editable");
+        chartDescription.dataset.id = `chart-description-${index}`;
+        chartDescription.textContent = savedChart.description;
+
+        // 🟢 Append elements to the chart container
+        chartContainer.appendChild(chartTitle);
+        chartContainer.appendChild(clonedCanvas);
+        chartContainer.appendChild(chartDescription);
+
+        // 🟢 Append to the dashboard
+        document.querySelector(".chartArea").appendChild(chartContainer);
+
+        // ✅ Fix: Use stored config directly (without JSON.parse issues)
+        let restoredConfig = savedChart.chartConfig;
+
+        if (!restoredConfig.options) restoredConfig.options = {};
+        if (!restoredConfig.options.plugins) restoredConfig.options.plugins = {};
+        if (restoredConfig.options.plugins.title) {
+            restoredConfig.options.plugins.title.display = false; // Ensure title is hidden
+        }
+
+        new Chart(clonedCanvas.getContext("2d"), restoredConfig);
+
+        // 🟢 Re-apply inline editing for restored charts
+        applyInlineEditing(chartTitle);
+        applyInlineEditing(chartDescription);
+    });
+}
+*/
+
+
+
+
+
+
+
+// ✅ Restore charts when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+    restoreChartsFromLocalStorage();
+});
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const editor = document.getElementById("htmlEditor");
+    const textarea = document.getElementById("editorContent");
+    const editButton = document.getElementById("editHtmlButton");
+    const saveButton = document.getElementById("saveHtmlButton");
+    const cancelButton = document.getElementById("cancelHtmlButton");
+    const closeButton = document.getElementById("closeEditorButton");
+
+    function openEditor() {
+        if (!editor || !textarea) {
+            console.error("Editor elements not found.");
+            return;
+        }
+
+        editor.style.display = "flex"; // Show the editor
+        textarea.value = localStorage.getItem("savedHTML") || document.body.innerHTML; // Load saved HTML or current state
+    }
+
+    function saveAndRefresh() {
+        if (!textarea) {
+            console.error("Editor content not found.");
+            return;
+        }
+
+        try {
+            const updatedHTML = textarea.value;
+            localStorage.setItem("savedHTML", updatedHTML);
+
+            let tempDiv = document.createElement("div");
+            tempDiv.innerHTML = updatedHTML;
+
+            document.querySelectorAll(".editable").forEach(el => {
+                let key = el.dataset.id;
+                if (key && tempDiv.querySelector(`[data-id='${key}']`)) {
+                    el.innerText = tempDiv.querySelector(`[data-id='${key}']`).innerText;
+                    localStorage.setItem(key, el.innerText.trim());
+                }
+            });
+
+            editor.style.display = "none";
+            location.reload(); // Refresh to apply changes
+        } catch (error) {
+            console.error("Error updating HTML:", error);
+        }
+    }
+
+    function closeEditor() {
+        editor.style.display = "none"; // Hide editor without saving
+    }
+
+    if (editButton) editButton.addEventListener("click", openEditor);
+    if (saveButton) saveButton.addEventListener("click", saveAndRefresh);
+    if (cancelButton) cancelButton.addEventListener("click", closeEditor);
+    if (closeButton) closeButton.addEventListener("click", closeEditor);
+
+    // ✅ Load saved edits on page load
+    if (localStorage.getItem("savedHTML")) {
+        let tempDiv = document.createElement("div");
+        tempDiv.innerHTML = localStorage.getItem("savedHTML");
+
+        document.querySelectorAll(".editable").forEach(el => {
+            let key = el.dataset.id;
+            if (key && tempDiv.querySelector(`[data-id='${key}']`)) {
+                el.innerText = tempDiv.querySelector(`[data-id='${key}']`).innerText;
+            }
+        });
+    }
+});
+
+
+
+
+
+
+
+
+
+      </script>
+  </body>
+</html>

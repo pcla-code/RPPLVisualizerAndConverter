@@ -1,0 +1,37 @@
+c GroupID,c Timestamp,c Leader ID,c HQIM Integration - Priority of Curriculum Implementation,c HQIM Integration - Teacher Accountability for Curriculum Implementation,c HQIM Integration - Integration of Curriculum Implementation with School Systems,c Use of Data to Support HQIM - Proportion of Professional Development Time for Curriculum Implementation,c Use of Data to Support HQIM - Frequency of School Leadership Reviewing Data on Curriculum Implementation,c Use of Data to Support HQIM - Frequency of Teachers Receiving Specific Feedback on Curriculum Implementation,c Existing Support for HQIM - Proportion of Professional Development Time Dedicated to Supporting Teachers,c Existing Support for HQIM - Frequency of Teachers Receiving Individualized Feedback and Support,c Existing Support for HQIM - Frequency of Teacher Collaboration on Curriculum Implementation
+Group1,20/12/2023,LDR001,Not a priority,To a very great extent,Minimally,Some Time,Somewhat,Not at all,Some Time,Somewhat,Not at all
+Group1,15/09/2023,LDR004,Not a priority,Somewhat,To a very great extent,A Lot of Time,Somewhat,To a very great extent,A Lot of Time,Somewhat,To a very great extent
+Group1,09/11/2023,LDR003,High priority,Somewhat,To a great extent,No Time,Not at all,Somewhat,No Time,Not at all,Somewhat
+Group1,10/05/2023,LDR001,High priority,To a very great extent,To a great extent,Minimal Time,Minimally,Not at all,Minimal Time,Minimally,Not at all
+Group1,10/05/2023,LDR002,Very low priority,To a very great extent,Minimally,Some Time,Not at all,Somewhat,Some Time,Not at all,Somewhat
+Group1,28/10/2023,LDR003,High priority,To a great extent,Minimally,Nearly All of The Time,Minimally,To a very great extent,Nearly All of The Time,Minimally,To a very great extent
+Group2,29/04/2023,LDR003,Very high priority,Somewhat,Somewhat,Nearly All of The Time,To a great extent,Minimally,Nearly All of The Time,To a great extent,Minimally
+Group2,22/10/2023,LDR005,Very high priority,Somewhat,Not at all,Nearly All of The Time,To a great extent,To a great extent,Nearly All of The Time,To a great extent,To a great extent
+Group2,25/08/2023,LDR002,Not a priority,Somewhat,To a very great extent,A Lot of Time,To a very great extent,Not at all,A Lot of Time,To a very great extent,Not at all
+Group2,15/02/2023,LDR001,Not a priority,Minimally,To a very great extent,Minimal Time,To a great extent,Not at all,Minimal Time,To a great extent,Not at all
+Group2,08/06/2023,LDR004,High priority,Minimally,Minimally,A Lot of Time,Minimally,To a great extent,A Lot of Time,Minimally,To a great extent
+Group2,28/07/2023,LDR002,Very low priority,To a great extent,Somewhat,No Time,Not at all,To a great extent,No Time,Not at all,To a great extent
+Group2,08/03/2023,LDR002,High priority,To a great extent,To a very great extent,Nearly All of The Time,Somewhat,Minimally,Nearly All of The Time,Somewhat,Minimally
+Group3,29/05/2023,LDR005,Very low priority,To a very great extent,To a very great extent,Nearly All of The Time,Minimally,To a very great extent,Nearly All of The Time,Minimally,To a very great extent
+Group3,28/04/2023,LDR005,Very low priority,Not at all,Somewhat,A Lot of Time,To a great extent,Not at all,A Lot of Time,To a great extent,Not at all
+Group3,10/02/2023,LDR005,Very high priority,Somewhat,Minimally,Minimal Time,Not at all,Minimally,Minimal Time,Not at all,Minimally
+Group3,05/10/2023,LDR003,Very low priority,To a great extent,To a great extent,No Time,Not at all,Somewhat,No Time,Not at all,Somewhat
+Group3,03/07/2023,LDR003,High priority,Not at all,Not at all,No Time,Not at all,Somewhat,No Time,Not at all,Somewhat
+Group3,27/10/2023,LDR003,High priority,Minimally,To a very great extent,Nearly All of The Time,To a great extent,Not at all,Nearly All of The Time,To a great extent,Not at all
+Group3,29/05/2023,LDR005,Very low priority,To a very great extent,To a very great extent,Nearly All of The Time,Minimally,To a very great extent,Nearly All of The Time,Minimally,To a very great extent
+Group3,28/04/2023,LDR005,Very low priority,Not at all,Somewhat,A Lot of Time,To a great extent,Not at all,A Lot of Time,To a great extent,Not at all
+Group3,10/02/2023,LDR005,Very high priority,Somewhat,Minimally,Minimal Time,Not at all,Minimally,Minimal Time,Not at all,Minimally
+Group3,05/10/2023,LDR003,Very low priority,To a great extent,To a great extent,No Time,Not at all,Somewhat,No Time,Not at all,Somewhat
+Group3,03/07/2023,LDR003,High priority,Not at all,Not at all,No Time,Not at all,Somewhat,No Time,Not at all,Somewhat
+Group3,27/10/2023,LDR003,High priority,Minimally,To a very great extent,Nearly All of The Time,To a great extent,Not at all,Nearly All of The Time,To a great extent,Not at all
+Group4,18/12/2023,LDR005,Not a priority,Minimally,Somewhat,No Time,Minimally,To a very great extent,No Time,Minimally,To a very great extent
+Group4,21/11/2023,LDR003,Not a priority,To a very great extent,Minimally,No Time,To a very great extent,Minimally,No Time,To a very great extent,Minimally
+Group4,11/12/2023,LDR002,Not a priority,To a great extent,To a great extent,Some Time,To a very great extent,To a very great extent,Some Time,To a very great extent,To a very great extent
+Group4,11/04/2023,LDR001,Low priority,Minimally,Minimally,Some Time,To a very great extent,Somewhat,Some Time,To a very great extent,Somewhat
+Group4,20/12/2023,LDR001,Not a priority,Minimally,To a very great extent,Minimal Time,Not at all,Not at all,Minimal Time,Not at all,Not at all
+Group4,21/01/2023,LDR005,Not a priority,Not at all,Not at all,Nearly All of The Time,Minimally,To a very great extent,Nearly All of The Time,Minimally,To a very great extent
+Group5,15/08/2023,LDR005,Very high priority,Not at all,To a great extent,Minimal Time,To a great extent,Not at all,Minimal Time,To a great extent,Not at all
+Group5,10/11/2023,LDR003,High priority,Somewhat,To a great extent,Nearly All of The Time,To a great extent,To a very great extent,Nearly All of The Time,To a great extent,To a very great extent
+Group5,14/12/2023,LDR005,Low priority,Minimally,Minimally,No Time,Somewhat,To a very great extent,No Time,Somewhat,To a very great extent
+Group5,09/03/2023,LDR003,Very low priority,To a very great extent,To a great extent,Minimal Time,To a very great extent,Minimally,Minimal Time,To a very great extent,Minimally
+Group5,29/01/2023,LDR005,Not a priority,Minimally,Somewhat,Minimal Time,Somewhat,Not at all,Minimal Time,Somewhat,Not at all

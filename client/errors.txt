@@ -1,0 +1,144 @@
+âœ… Local Username: n3iTh4N
+RPPL_LocalVisualizerCORS.html:522 ðŸ“‚ CSV Files Assigned to n3iTh4N : Array(3)0: "PLObservation.csv"1: "ClassroomObservation.csv"2: "StudentSurvey.csv"length: 3[[Prototype]]: Array(0)
+RPPL_LocalVisualizerCORS.html:508  âŒ Error fetching username from both sources: TypeError: Cannot read properties of undefined (reading 'ok')
+    at RPPL_LocalVisualizerCORS.html:499:20
+(anonymous) @ RPPL_LocalVisualizerCORS.html:508
+favicon.ico:1 
+            
+            
+            Failed to load resource: the server responded with a status of 404 (File not found)
+
+
+
+Access to fetch at 'http://127.0.0.1:9000/get-username' from origin 'http://192.168.100.27:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+127.0.0.1:9000/get-username:1 
+            
+            
+            Failed to load resource: net::ERR_FAILED
+RPPL_LocalVisualizerCORS.html:431  Retrying fetch... (5 attempts left)
+(anonymous) @ RPPL_LocalVisualizerCORS.html:431
+favicon.ico:1 
+            
+            
+            Failed to load resource: the server responded with a status of 404 (File not found)
+RPPL_LocalVisualizerCORS.html:1  Access to fetch at 'http://127.0.0.1:9000/get-username' from origin 'http://192.168.100.27:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+127.0.0.1:9000/get-username:1 
+            
+            
+            Failed to load resource: net::ERR_FAILED
+RPPL_LocalVisualizerCORS.html:431  Retrying fetch... (4 attempts left)
+(anonymous) @ RPPL_LocalVisualizerCORS.html:431
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+RPPL_LocalVisualizerCORS.html:1  Access to fetch at 'http://127.0.0.1:9000/get-username' from origin 'http://192.168.100.27:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+RPPL_LocalVisualizerCORS.html:419 
+            
+            
+            GET http://127.0.0.1:9000/get-username net::ERR_FAILED 200 (OK)
+fetchUsername @ RPPL_LocalVisualizerCORS.html:419
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+RPPL_LocalVisualizerCORS.html:431  Retrying fetch... (3 attempts left)
+(anonymous) @ RPPL_LocalVisualizerCORS.html:431
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+RPPL_LocalVisualizerCORS.html:1  Access to fetch at 'http://127.0.0.1:9000/get-username' from origin 'http://192.168.100.27:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+RPPL_LocalVisualizerCORS.html:419 
+            
+            
+            GET http://127.0.0.1:9000/get-username net::ERR_FAILED 200 (OK)
+fetchUsername @ RPPL_LocalVisualizerCORS.html:419
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+RPPL_LocalVisualizerCORS.html:431  Retrying fetch... (2 attempts left)
+(anonymous) @ RPPL_LocalVisualizerCORS.html:431
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+RPPL_LocalVisualizerCORS.html:1  Access to fetch at 'http://127.0.0.1:9000/get-username' from origin 'http://192.168.100.27:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+RPPL_LocalVisualizerCORS.html:419 
+            
+            
+            GET http://127.0.0.1:9000/get-username net::ERR_FAILED 200 (OK)
+fetchUsername @ RPPL_LocalVisualizerCORS.html:419
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+RPPL_LocalVisualizerCORS.html:431  Retrying fetch... (1 attempts left)
+(anonymous) @ RPPL_LocalVisualizerCORS.html:431
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+RPPL_LocalVisualizerCORS.html:1  Access to fetch at 'http://127.0.0.1:9000/get-username' from origin 'http://192.168.100.27:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+RPPL_LocalVisualizerCORS.html:419 
+            
+            
+            GET http://127.0.0.1:9000/get-username net::ERR_FAILED 200 (OK)
+fetchUsername @ RPPL_LocalVisualizerCORS.html:419
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+RPPL_LocalVisualizerCORS.html:434  Failed to fetch
+(anonymous) @ RPPL_LocalVisualizerCORS.html:434
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+setTimeout
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+Promise.catch
+fetchUsername @ RPPL_LocalVisualizerCORS.html:429
+(anonymous) @ RPPL_LocalVisualizerCORS.html:432
+RPPL_LocalVisualizerCORS.html:440 Logged-in User (Main Server): Neithan

@@ -1,0 +1,11 @@
+c Pulse Check ID,c Timestamp,c Teacher ID,c PL Relevance - Relevance to Work,c PL Relevance - Tailored to Individual Needs,c PL Skill-Building - Deepened Understanding of Curriculum
+PULSE001,05/02/2024,TCH001,Somewhat relevant,Somewhat tailored,To a great extent
+PULSE001,05/02/2024,TCH001,Quite relevant,Tailored to a great extent,To a very great extent
+PULSE002,10/02/2024,TCH002,Very relevant,Tailored to a very great extent,To a very great extent
+PULSE002,10/02/2024,TCH002,Somewhat relevant,Minimally tailored,Minimally
+PULSE003,18/02/2024,TCH003,Minimally relevant,Not at all,Not at all
+PULSE003,18/02/2024,TCH003,Not relevant,Minimally tailored,Somewhat
+PULSE004,25/02/2024,TCH004,Quite relevant,Tailored to a great extent,To a great extent
+PULSE004,25/02/2024,TCH004,Somewhat relevant,Somewhat tailored,To a very great extent
+PULSE005,01/03/2024,TCH005,Very relevant,Tailored to a very great extent,To a very great extent
+PULSE005,01/03/2024,TCH005,Not relevant,Not at all,Minimally

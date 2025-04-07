@@ -1,0 +1,359 @@
+    body {
+      font-family: Segoe UI, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #1c1c1c, #2d2d2d);
+      color: #fff;
+    }
+    .glass {
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.125);
+      padding: 20px;
+      margin: 20px;
+      overflow: auto;
+    }
+    table {
+      border-collapse: collapse;
+      width: max-content;
+      min-width: 100%;
+      overflow: auto;
+    }
+    th, td {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px;
+      text-align: center;
+      color: #666;
+    }
+    th {
+      background-color: rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .btn {
+      padding: 6px 12px;
+      margin: 10px 5px 10px 0;
+      background-color: #D72638;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn:disabled {
+      background-color: #ccc;
+    }
+    input[type="text"] {
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+    .delete-btn {
+      background-color: transparent;
+      color: #ff5c5c;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+    .table-container {
+      overflow-x: auto;
+      max-height: 70vh;
+    }
+	
+/* IMPORT FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');	
+	
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY */
+body, html {
+    width: 100%;
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
+    background: #F8F9FA; /* Light gray for a professional feel */
+}
+
+/* HEADER */
+.header {
+    background: linear-gradient(to right, #7B1F43, #D35400); /* RPPL gradient */
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 50px;
+    margin-right: 15px;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* MAIN CONTAINER */
+.container {
+    display: flex;
+    height: calc(100vh - 80px);
+}
+
+/* SIDEBAR (Clean White, Elementor Style) */
+.sidebar {
+    flex: 0 0 22%;
+    padding: 20px;
+    background: white; /* Sleek white */
+    color: #333;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 5px 0px 15px rgba(0, 0, 0, 0.05);
+    overflow-y: auto;
+}
+
+.filters {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* SIDEBAR HEADERS */
+.sidebar h2 {
+    font-family: 'Avenir', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+
+
+/* BUTTONS */
+.primary-btn {
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    background: #7B1F43;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.primary-btn:hover {
+    background: #D35400;
+}
+
+/* CHART AREA */
+.chartArea {
+    flex: 0 0 78%;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F8F9FA; /* Light gray */
+}
+
+/* GLASSMORPHISM CONTAINER (Enlarged) */
+.glass-container {
+    width: 95%;
+    max-width: 1200px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.2); /* Glass effect */
+    backdrop-filter: blur(12px); /* Blur effect */
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+/* LOADING SPINNER */
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+.loading-spinner {
+    font-size: 18px;
+    color: #555;
+    animation: fadeInOut 2s infinite;
+}
+
+/* FOOTER */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 14px;
+    background: white;
+    color: #7B1F43;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+}
+
+
+
+
+
+
+
+
+
+
+/* Modernized Select Styling */
+select {
+    font-family: 'Avenir', sans-serif;
+    font-size: 14px;
+    color: #666; /* Lighter gray text */
+    background-color: rgba(255, 255, 255, 0.1); /* Slight glass effect */
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 12px 15px;
+    border-radius: 8px; /* Softer, rounded corners */
+    appearance: none; /* Remove default browser styling */
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Enhance focus state */
+select:focus {
+    outline: none;
+    border-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Stronger focus effect */
+}
+
+/* Dropdown options with smooth style */
+select option {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #555 !important; /* Slightly darker text */
+    padding: 8px;
+    font-weight: 300;
+}
+
+/* Hover & Focus effects for options */
+select option:hover,
+select option:focus {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: #333 !important;
+}
+
+
+
+/* Make multi-select boxes look cleaner */
+select[multiple] {
+    height: auto;
+    min-height: 100px;
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 8px;
+}
+
+/* Remove default browser dropdown icon */
+select::-ms-expand {
+    display: none;
+}
+
+
+
+
+
+
+/* Hide the default file input */
+#importPresetsInput {
+    display: none;
+}
+
+/* Styled button for uploading presets */
+.file-upload-label {
+    display: block;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Make it identical to other buttons */
+.file-upload-label.primary-btn {
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    background: #7B1F43; /* Match other buttons */
+    color: white;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+/* Hover effect identical to other buttons */
+.file-upload-label.primary-btn:hover {
+    background: #D35400; /* Same hover effect */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+	@keyframes fadeInOut {
+		0%, 100% { opacity: 0; }
+		50% { opacity: 1; }
+	}
+
+	.loading-spinner {
+		position: absolute;
+		top: 50%;
+		left: 58%;
+		transform: translate(-50%, -50%);
+		z-index: -1;  // Keep behind the chart
+		color: #666;
+		font-size: 24px;
+		display: block;
+		text-align: center;
+		animation: fadeInOut 2s infinite;  // Apply the animation
+	}
+
+	
+	/* MENU ADDED - Right-aligned header menu */
+	.header-menu {
+		margin-left: auto; /* Pushes the menu to the right */
+		display: flex;
+		gap: 20px; /* Spacing between menu items */
+	}
+
+	.header-menu a {
+		text-decoration: none;
+		color: white;
+		font-size: 16px;
+		font-weight: 500;
+		transition: color 0.3s ease;
+	}
+
+	.header-menu a:hover {
+		color: #FFD700; /* Gold color on hover */
+	}
+
+	// logged in username
+	.username-display {
+		font-size: 10px !important;
+		color: #ccc;  /* Light gray for subtle contrast */
+		margin-top: -5px;
+	}
