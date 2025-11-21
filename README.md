@@ -170,7 +170,7 @@ This Python script is a **pre-processor** for raw survey exports from **Qualtric
 
 ---
 
-### 🚀 What the Converter Does
+### What the Converter Does
 
 `convert_datasets()` processes every `.csv` inside an input folder. For each file, it performs:
 
@@ -189,19 +189,19 @@ The converter builds a clean row shaped like:
 
 It does the following:
 
-#### ✅ Adds a Unique ID
+#### Adds a Unique ID
 
 Every row gets a synthetic ID:
 
 - Pattern: `ID_<random six digits>`
 
-#### ✅ Adds a Timestamp (except for Google Forms)
+#### Adds a Timestamp (except for Google Forms)
 
 - If an `"End Date"` column is present → use that as the timestamp.  
 - Otherwise → fall back to the current date/time.  
 - For Google Forms files, only `Unique ID` is added (no timestamp column).
 
-#### ✅ Strips Metadata / Identifiers
+#### Strips Metadata / Identifiers
 
 Any column whose header contains substrings like:
 
@@ -210,7 +210,7 @@ Any column whose header contains substrings like:
 
 is removed. This step is what **de-identifies** the export.
 
-#### ✅ Collapses True/False Paired Questions
+#### Collapses True/False Paired Questions
 
 Certain questions are exported as two columns:
 
@@ -225,7 +225,7 @@ The script:
 
 This makes downstream analysis easier and keeps booleans in a single column.
 
-#### ✅ Preserves All Other Survey Items
+#### Preserves All Other Survey Items
 
 All remaining survey columns (that aren’t metadata or special True/False pairs) are kept as-is.
 
@@ -352,7 +352,7 @@ you can edit:
 
 ---
 
-## 📦 Summary
+## 📦 Final Overview of What the Converter Does
 
 This converter is designed to:
 
@@ -363,7 +363,7 @@ This converter is designed to:
 - Add timestamps (where applicable)  
 - Tag each column as **categorical** (`c`) or **numeric** (`n`)
 
-The resulting CSVs are ready for ingestion into **RPPL Insights (RPPL Visualizer v2.0)** or any other analysis pipeline that expects typed, de-identified survey data.
+The resulting CSVs are ready for ingestion into **RPPL Insights (RPPL Visualizer v1.0)** or any other analysis pipeline that expects typed, de-identified survey data.
 
 ---
 
