@@ -164,5 +164,208 @@ Both the Visualizer and Dashboard support local session states and preset saving
 
 ---
 
+## 🧮 CSV Converter (Qualtrics / Google Forms → RPPL Format)
+
+This Python script is a **pre-processor** for raw survey exports from **Qualtrics** and **Google Forms**. Its goal is to convert messy platform-specific CSVs into clean, standardized, typed datasets ready for analysis. It removes PII, normalizes True/False items, generates unique IDs, and tags each column as **categorical** (`c`) or **numeric** (`n`).
+
+---
+
+### 🚀 What the Converter Does
+
+`convert_datasets()` processes every `.csv` inside an input folder. For each file, it performs:
+
+### **1. Platform Detection**
+- If the filename contains `"Qualtrics"` → skip the first metadata row and use the second row as headers.  
+- If the filename contains `"GoogleForms"` → use the first row as headers, and **do not** include timestamps from the file.  
+- Everything else is treated as a generic CSV.
+
+---
+
+### **2. Column Cleaning & Reshaping**
+
+The converter builds a clean row shaped like:
+
+    Unique ID | Timestamp | Q1 | Q2 | Q3 | ...
+
+It does the following:
+
+#### ✅ Adds a Unique ID
+
+Every row gets a synthetic ID:
+
+- Pattern: `ID_<random six digits>`
+
+#### ✅ Adds a Timestamp (except for Google Forms)
+
+- If an `"End Date"` column is present → use that as the timestamp.  
+- Otherwise → fall back to the current date/time.  
+- For Google Forms files, only `Unique ID` is added (no timestamp column).
+
+#### ✅ Strips Metadata / Identifiers
+
+Any column whose header contains substrings like:
+
+- `IP Address`, `Recipient Email`, `Recipient First Name`, `Progress`,  
+  `Location Latitude`, `Location Longitude`, `Response ID`, `Start Date`, `End Date`, etc.
+
+is removed. This step is what **de-identifies** the export.
+
+#### ✅ Collapses True/False Paired Questions
+
+Certain questions are exported as two columns:
+
+- `... ? - True`  
+- `... ? - False`
+
+The script:
+
+- Keeps only the `"True"` column.
+- Renames it to the base question text (everything before `" - True"`).
+- Writes `"TRUE"` if the source cell is `1`, otherwise `"FALSE"`.
+
+This makes downstream analysis easier and keeps booleans in a single column.
+
+#### ✅ Preserves All Other Survey Items
+
+All remaining survey columns (that aren’t metadata or special True/False pairs) are kept as-is.
+
+---
+
+### **3. Writing the Output File**
+
+Depending on the `--separate` flag:
+
+- `--separate yes`  
+  - Each input CSV becomes its own file:  
+    `converted_<original_filename>.csv`
+- `--separate no` (default)  
+  - All cleaned rows from all files are appended into:  
+    `converted_combined.csv`
+
+In both cases, the result is a clean, rectangular dataset with `Unique ID` (and usually `Timestamp`) in the first columns.
+
+---
+
+### **4. Type Tagging (`c` vs `n`)**
+
+Once the cleaned data is written, the script calls `final_tagging()` which:
+
+1. Re-opens the output CSV.  
+2. Reads all rows to inspect each column’s contents.  
+3. Forces the first two headers to:
+   - `c Unique ID`
+   - `c Timestamp` (if present)
+4. For every other column:
+   - Looks at all non-empty values in that column.
+   - If **every** value can be parsed as a number (`float(...)` succeeds) → tags as `n`.
+   - Otherwise → tags as `c`.
+
+Example final header row:
+
+    c Unique ID, c Timestamp, n Score, c Favorite Activity, n Hours Per Week
+
+These tags are used by older RPPL tooling and any downstream pipeline that needs to know if a variable is numeric or categorical.
+
+---
+
+## 🖥 Command-Line Usage
+
+Run the converter from a terminal or command prompt:
+
+    python converter.py INPUT_FOLDER OUTPUT_FOLDER [--separate yes|no]
+
+### Arguments
+
+- `INPUT_FOLDER`  
+  Folder containing the raw Qualtrics / Google Forms CSV exports.
+
+- `OUTPUT_FOLDER`  
+  Folder where the converted CSV(s) will be written.
+
+- `--separate` (optional, default = `no`)  
+  - `yes` → write one converted file per input CSV.  
+  - `no`  → write a single combined file called `converted_combined.csv`.
+
+### Example: Single Combined Output
+
+    python converter.py raw_exports converted --separate no
+
+- All `.csv` files in `raw_exports/` are read.
+- A single `converted_combined.csv` appears under `converted/`.
+
+### Example: One File Per Survey
+
+    python converter.py raw_exports converted --separate yes
+
+- Each input becomes `converted_<original>.csv` in `converted/`.
+
+---
+
+## 🔍 How Column Type Detection Works
+
+The helper `is_numeric(value)` simply tries:
+
+- `float(value)`
+
+If it succeeds for **all** non-empty cells in a column:
+
+- Column is tagged as `n` (numeric).
+
+If any non-empty cell fails numeric parsing:
+
+- Column is tagged as `c` (categorical).
+
+This heuristic is usually sufficient for survey data where Likert items are numeric and text responses are free-form strings.
+
+---
+
+## 🔧 Customizing the Converter
+
+You can adapt the script to your own survey exports:
+
+### Change Which Columns Are Removed
+
+Edit the `remove_columns` list inside `convert_datasets()`:
+
+- Any header containing one of these substrings will be dropped.
+- Add/remove items to control which metadata fields are stripped.
+
+### Add New True/False Pairs
+
+Edit the `paired_columns` list:
+
+- Include the **exact header text** from your export.
+- The script will treat each `"... - True"` / `"... - False"` pair as one boolean variable.
+
+### Custom ID or Timestamp Logic
+
+If you want to:
+
+- Use a different ID pattern  
+- Pull timestamps from another column  
+- Store dates in another format
+
+you can edit:
+
+- `generate_unique_id()`  
+- The timestamp section in `clean_row()`.
+
+---
+
+## 📦 Summary
+
+This converter is designed to:
+
+- Clean raw Qualtrics / Google Forms exports  
+- Remove identifying metadata  
+- Normalize True/False paired questions  
+- Generate unique IDs per response  
+- Add timestamps (where applicable)  
+- Tag each column as **categorical** (`c`) or **numeric** (`n`)
+
+The resulting CSVs are ready for ingestion into **RPPL Insights (RPPL Visualizer v2.0)** or any other analysis pipeline that expects typed, de-identified survey data.
+
+---
+
 ## 📎 License
 This project is licensed for internal use within RPPL and Brown University’s Stronghold environment.
